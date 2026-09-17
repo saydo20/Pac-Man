@@ -1,23 +1,32 @@
 import pygame
-import UI.main_menu as main
+from UI.main_menu import MainMenu
+from UI.game_play import GamePlay
 
 pygame.init()
 screen = pygame.display.set_mode((1900, 1730))
 
+menu = MainMenu(screen)
+game_play = GamePlay(screen)
+state = "menu"
 running = True
 while running:
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
+    if state == "menu":
+        action = menu.handle_events()
+        if action == "quit":
             running = False
-        screen.blit(main.border_x, (0, 0))
-        screen.blit(main.border_y, (1890, 0))
-        screen.blit(main.border_x, (0, 1720))
-        screen.blit(main.border_y, (0, 0))
-        ##########################
-        screen.blit(main.border_inside_x, (20, 20))
-        # screen.blit(main.border_y, (1880, 10))
-        # screen.blit(main.border_x, (0, 1710))
-        # screen.blit(main.border_y, (10, 10))
-        pygame.display.flip()
+        elif action == "start":
+            state = "gameplay"
+            screen.fill((0,0,0))
+            continue
+
+        menu.update()
+        menu.draw()
+    elif state == "gameplay":
+        action = game_play.handle_events()
+        if action == "quit":
+            running = False
+
+        game_play.draw()
+        game_play.update()
 
 pygame.quit()
