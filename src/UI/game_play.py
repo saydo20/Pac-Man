@@ -32,7 +32,6 @@ class GamePlay:
 
     def handle_events(self):
         for event in pygame.event.get():
-            print(event)
             if event.type == pygame.QUIT:
                 return "quit"
             if event.type == pygame.KEYDOWN:

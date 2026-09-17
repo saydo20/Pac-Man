@@ -28,14 +28,19 @@ class MainMenu:
         self.pac_man_title = pygame.image.load("UI/images/pacman.png")
 
         self.start_game = pygame.image.load("UI/images/start_game.png")
-        self.view_highscores = pygame.image.load("UI/images/veiw_highscores.png")
+        self.view_highscores = pygame.image.load(
+            "UI/images/veiw_highscores.png")
         self.instructions = pygame.image.load("UI/images/instractions.png")
         self.exit_button = pygame.image.load("UI/images/exit.png")
 
-        self.start_game_selected = pygame.image.load("UI/images/start_game_selected.png")
-        self.view_highscores_selected = pygame.image.load("UI/images/veiw_highscores_selected.png")
-        self.instructions_selected = pygame.image.load("UI/images/instractions_selected.png")
-        self.exit_button_selected = pygame.image.load("UI/images/exit_selected.png")
+        self.start_game_selected = pygame.image.load(
+            "UI/images/start_game_selected.png")
+        self.view_highscores_selected = pygame.image.load(
+            "UI/images/veiw_highscores_selected.png")
+        self.instructions_selected = pygame.image.load(
+            "UI/images/instractions_selected.png")
+        self.exit_button_selected = pygame.image.load(
+            "UI/images/exit_selected.png")
 
         self.arrow = pygame.image.load("UI/images/arow.png")
         self.coin = pygame.image.load("UI/images/insert_coin.png")
@@ -49,7 +54,6 @@ class MainMenu:
 
     def handle_events(self):
         for event in pygame.event.get():
-            print(event)
             if event.type == pygame.QUIT:
                 return "quit"
             if event.type == pygame.KEYDOWN:
