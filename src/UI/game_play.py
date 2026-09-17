@@ -1,9 +1,14 @@
 import pygame
 import time
+import string
 
 
 class GamePlay:
     def __init__(self, screen: pygame.Surface):
+        self.score = 0
+        self.lives = 0
+        self.level = 0
+        self.time = 0
         self.screen = screen
         self.border_x = pygame.Surface((1900, 10))
         self.border_y = pygame.Surface((10, 1730))
@@ -21,6 +26,10 @@ class GamePlay:
 
         self.title = pygame.image.load("UI/images/title.png")
         self.title_dark = pygame.image.load("UI/images/title_dark.png")
+        self.score_text = pygame.image.load("UI/images/SCORE.png")
+        self.level = pygame.image.load("UI/images/LEVEL.png")
+        self.lives = pygame.image.load("UI/images/LIVES.png")
+        self.time = pygame.image.load("UI/images/TIME.png")
 
         self.current_title = self.title
 
@@ -29,6 +38,12 @@ class GamePlay:
                         self.border_inside_x2, self.border_inside_y2,
                         self.border_inside_x3, self.border_inside_y3]:
             surface.fill(blue_color)
+        self.images = {}
+        for char in string.ascii_uppercase + string.digits:
+            self.images[char] = pygame.image.load(f"UI/images/{char}.png")
+        self.images["_"] = pygame.image.load("UI/images/_.png")
+        self.images["."] = pygame.image.load("UI/images/dot.png")
+        self.images[":"] = pygame.image.load("UI/images/:.png")
 
     def handle_events(self):
         for event in pygame.event.get():
@@ -44,6 +59,17 @@ class GamePlay:
         if now - self.last_switch >= 1:
             self.current_title = self.title_dark if self.current_title == self.title else self.title
             self.last_switch = now
+
+    def draw_text(self, text: str, x, y, max_size):
+        for char in text:
+            if x >= max_size - 32:
+                self.screen.blit(self.images["."], (x, y))
+                self.screen.blit(self.images["."], (x + 15, y))
+                self.screen.blit(self.images["."], (x + 30, y))
+                break
+            image = self.images[char.upper() if char.isalpha() else char]
+            self.screen.blit(image, (x, y))
+            x += 32
 
     def draw(self):
         self.screen.fill((0, 0, 0))
@@ -67,5 +93,14 @@ class GamePlay:
         self.screen.blit(self.border_inside_y3, (70, 270))
         self.screen.blit(self.border_inside_y3, (1820, 270))
         self.screen.blit(self.border_inside_x3, (70, 1530))
+
+        self.screen.blit(self.border_inside_x3, (70, 400))
+
+        self.screen.blit(self.score_text, (300, 290))
+        self.screen.blit(self.lives, (700, 290))
+        self.screen.blit(self.level, (1100, 290))
+        self.screen.blit(self.time, (1500, 290))
+
+        self.draw_text(f"{self.score:02d}", 290, 350, 4000)
 
         pygame.display.flip()

@@ -16,7 +16,7 @@ while running:
             running = False
         elif action == "start":
             state = "gameplay"
-            screen.fill((0,0,0))
+            screen.fill((0, 0, 0))
             continue
 
         menu.update()
