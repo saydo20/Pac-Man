@@ -1,5 +1,4 @@
-from . import (ghost, pacman, regular_pacgums,
-               super_pacgums)
+import ghost, pacman, regular_pacgums, super_pacgums
 from mazegenerator import MazeGenerator
 
 from typing import Dict
@@ -13,8 +12,8 @@ class GameData:
         self.__super_pacgums = super_pacgums.SuperPacgum()
 
         self.levels = config['levels']
-        self.size_maze = (self.levels[0]['width'],
-                          self.levels[0]['height'])
+        self.size_maze = (self.levels[1]['width'],
+                          self.levels[1]['height'])
         self.seed = config['seed']
         self.__mazegen = MazeGenerator(self.size_maze, False,
                                        (0, 0), (-1, -1), self.seed)

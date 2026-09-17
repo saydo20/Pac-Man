@@ -6,9 +6,9 @@ import string
 class GamePlay:
     def __init__(self, screen: pygame.Surface):
         self.score = 0
-        self.lives = 0
-        self.level = 0
-        self.time = 0
+        self.hearts = 3
+        self.level_count = 2
+        self.time_count = 90
         self.screen = screen
         self.border_x = pygame.Surface((1900, 10))
         self.border_y = pygame.Surface((10, 1730))
@@ -19,8 +19,11 @@ class GamePlay:
         self.border_inside_x3 = pygame.Surface((1760, 10))
         self.border_inside_y3 = pygame.Surface((10, 1260))
 
+
+
         self.border_x.fill((0, 0, 128))
         self.border_y.fill((0, 0, 128))
+
 
         self.last_switch = time.monotonic()
 
@@ -30,6 +33,7 @@ class GamePlay:
         self.level = pygame.image.load("UI/images/LEVEL.png")
         self.lives = pygame.image.load("UI/images/LIVES.png")
         self.time = pygame.image.load("UI/images/TIME.png")
+        self.heart = pygame.image.load("UI/images/heart.png")
 
         self.current_title = self.title
 
@@ -58,10 +62,14 @@ class GamePlay:
         now = time.monotonic()
         if now - self.last_switch >= 1:
             self.current_title = self.title_dark if self.current_title == self.title else self.title
+            self.time_count -= 1
             self.last_switch = now
 
     def draw_text(self, text: str, x, y, max_size):
         for char in text:
+            if char == " ":
+                x += 10
+                continue
             if x >= max_size - 32:
                 self.screen.blit(self.images["."], (x, y))
                 self.screen.blit(self.images["."], (x + 15, y))
@@ -71,7 +79,7 @@ class GamePlay:
             self.screen.blit(image, (x, y))
             x += 32
 
-    def draw(self):
+    def draw(self, maze):
         self.screen.fill((0, 0, 0))
         self.screen.blit(self.border_x, (0, 0))
         self.screen.blit(self.border_y, (1890, 0))
@@ -101,6 +109,48 @@ class GamePlay:
         self.screen.blit(self.level, (1100, 290))
         self.screen.blit(self.time, (1500, 290))
 
-        self.draw_text(f"{self.score:02d}", 290, 350, 4000)
+        self.draw_text(f"{self.score:06d}", 290, 350, 4000)
+        x = 680
+        for i in range(self.hearts):
+            self.screen.blit(self.heart, (x, 350))
+            x += 60
+        self.draw_text(f"{self.level_count:02d}", 1140, 350, 1400)
+        self.draw_text(f"{self.time_count}", 1530, 350, 1800)
+#########################################################################
+        maze_width = len(maze[1])
+        MAX_MAZE_SIZE = 1080
+        CELL_SIZE = MAX_MAZE_SIZE // maze_width
+        WALL_THICKNESS = max(1, CELL_SIZE // 5)
 
+        self.wall_x = pygame.Surface((CELL_SIZE, WALL_THICKNESS))
+        self.wall_y = pygame.Surface((WALL_THICKNESS, CELL_SIZE))
+
+        self.wall_x.fill((255, 255, 255))
+        self.wall_y.fill((255, 255, 255))
+
+        maze_pixel_size = maze_width * CELL_SIZE
+
+        AREA_X = 70
+        AREA_Y = 400
+        AREA_WIDTH = 1760
+        AREA_HEIGHT = 1130
+
+        start_x = AREA_X + (AREA_WIDTH - maze_pixel_size) // 2
+        start_y = AREA_Y + (AREA_HEIGHT - maze_pixel_size) // 2
+        x = start_x
+        y = start_y
+        for line in maze:
+            for cell in line:
+                if cell & 1:
+                    self.screen.blit(self.wall_x, (x, y))
+                if cell & 2:
+                    self.screen.blit(self.wall_y, (x + CELL_SIZE - WALL_THICKNESS, y))
+                if cell & 4:
+                    self.screen.blit(self.wall_x, (x, y + CELL_SIZE - WALL_THICKNESS))
+                if cell & 8:
+                    self.screen.blit(self.wall_y, (x, y))
+                x += CELL_SIZE
+            x = start_x
+            y += CELL_SIZE
         pygame.display.flip()
+

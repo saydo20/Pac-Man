@@ -123,4 +123,6 @@ class MainMenu:
         if self.show_coin:
             self.screen.blit(self.coin, (800, 1600))
 
+        
+
         pygame.display.flip()
