@@ -26,13 +26,14 @@ class Score:
                 break
 
         if not player_found:
-            self.__scores.append({'Player': player_name,
+            self.__scores.append({'Player': player_name.upper(),
                                   'score': player_score})
 
         self.__scores.sort(key=lambda score: score['score'], reverse=True)
         self.__scores = self.__scores[:10]
 
-        self.__scores = [{**s, 'rank': i + 1} for i, s in
+        self.__scores = [{**s, 'rank': i + 1, 'first_3_chars': s['Player'][:3]}
+                         for i, s in
                          enumerate(self.__scores)]
 
         with open(self.__scores_file, "w") as f:
