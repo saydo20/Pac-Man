@@ -30,6 +30,8 @@ class GameData:
 
         # initialize super pacgums
         self.__super_pacgums = super_pacgums.SuperPacgum(self.size_maze)
+        self.super_pacgums.set_super_pacgum_score(
+            config['points_per_super_pacgum'])
 
     @property
     def ghost_red(self) -> ghost.Ghost:
