@@ -1,4 +1,4 @@
-import ghost, pacman, regular_pacgums, super_pacgums
+from . import ghost, pacman, regular_pacgums, super_pacgums
 from mazegenerator import MazeGenerator
 
 from typing import Dict
@@ -6,21 +6,43 @@ from typing import Dict
 
 class GameData:
     def __init__(self, config: Dict) -> None:
-        self.__ghosts = ghost.Ghost()
-        self.__pacman = pacman.Pacman()
-        self.__regular_pacgums = regular_pacgums.RegularPacgum()
-        self.__super_pacgums = super_pacgums.SuperPacgum()
-
         self.levels = config['levels']
         self.size_maze = (self.levels[1]['width'],
                           self.levels[1]['height'])
+
         self.seed = config['seed']
-        self.__mazegen = MazeGenerator(self.size_maze, False,
-                                       (0, 0), (-1, -1), self.seed)
+        self.maze = MazeGenerator(self.size_maze, False,
+                                  (0, 0), (-1, -1), self.seed)
+
+        self.grid = self.maze.maze
+
+        # initialize the 4 ghosts
+        self.__set_the_ghosts()
+
+        # initialize pacman
+        self.__pacman = pacman.Pacman(self.size_maze, config['lives'])
+
+        # initialize regular pacgums
+        self.__regular_pacgums = regular_pacgums.RegularPacgum()
+
+        # initialize super pacgums
+        self.__super_pacgums = super_pacgums.SuperPacgum(self.size_maze)
 
     @property
-    def ghosts(self) -> ghost.Ghost:
-        return self.__ghosts
+    def ghost_red(self) -> ghost.Ghost:
+        return self.__ghost_red
+
+    @property
+    def ghost_blue(self) -> ghost.Ghost:
+        return self.__ghost_blue
+
+    @property
+    def ghost_green(self) -> ghost.Ghost:
+        return self.__ghost_green
+
+    @property
+    def ghost_yellow(self) -> ghost.Ghost:
+        return self.__ghost_yellow
 
     @property
     def pacman(self) -> pacman.Pacman:
@@ -31,9 +53,26 @@ class GameData:
         return self.__regular_pacgums
 
     @property
-    def maze(self) -> MazeGenerator:
-        return self.__mazegen
-
-    @property
     def super_pacgums(self) -> super_pacgums.SuperPacgum:
         return self.__super_pacgums
+
+    def __set_the_ghosts(self) -> None:
+        # initialize red ghost and his start location
+        self.__ghost_red = ghost.Ghost(self.size_maze, ghost.Color.RED,
+                                       self.grid)
+        self.__ghost_red.set_start_position()
+
+        # initialize blue ghost and his start location
+        self.__ghost_blue = ghost.Ghost(self.size_maze, ghost.Color.BLUE,
+                                        self.grid)
+        self.__ghost_blue.set_start_position()
+
+        # initialize green ghost and his start location
+        self.__ghost_green = ghost.Ghost(self.size_maze, ghost.Color.GREEN,
+                                         self.grid)
+        self.__ghost_green.set_start_position()
+
+        # initialize yellow ghost and his start location
+        self.__ghost_yellow = ghost.Ghost(self.size_maze, ghost.Color.YELLOW,
+                                          self.grid)
+        self.__ghost_yellow.set_start_position()
