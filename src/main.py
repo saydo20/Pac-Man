@@ -2,16 +2,15 @@ import pygame
 from UI.main_menu import MainMenu
 from UI.game_play import GamePlay
 from gamedata import GameData
-import json
+from parse_config import Config
 
 pygame.init()
 screen = pygame.display.set_mode((1900, 1730))
 
 menu = MainMenu(screen)
 game_play = GamePlay(screen)
-with open("../config.json") as f:
-    data = json.load(f)
-game_data = GameData(data)
+config = Config.get_configuration("../config.json")
+game_data = GameData(config)
 state = "menu"
 running = True
 while running:
