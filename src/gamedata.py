@@ -1,4 +1,8 @@
-from . import ghost, pacman, regular_pacgums, super_pacgums
+import ghost
+import pacman
+import super_pacgums
+import regular_pacgums
+
 from mazegenerator import MazeGenerator
 
 from typing import Dict
@@ -10,17 +14,16 @@ class GameData:
         self.size_maze = (self.levels[1]['width'],
                           self.levels[1]['height'])
 
-        self.seed = config['seed']
         self.maze = MazeGenerator(self.size_maze, False,
-                                  (0, 0), (-1, -1), self.seed)
+                                  (0, 0), (-1, -1), config['seed'])
 
         self.grid = self.maze.maze
 
         # initialize the 4 ghosts
         self.__set_the_ghosts()
 
-        # initialize pacman
-        self.__pacman = pacman.Pacman(self.size_maze, config['lives'])
+        # initialize pacman and set his start location
+        self.__set_pacman(config['lives'])
 
         # initialize regular pacgums
         self.__regular_pacgums = regular_pacgums.RegularPacgum()
@@ -76,3 +79,7 @@ class GameData:
         self.__ghost_yellow = ghost.Ghost(self.size_maze, ghost.Color.YELLOW,
                                           self.grid)
         self.__ghost_yellow.set_start_position()
+
+    def __set_pacman(self, lives: int) -> None:
+        self.__pacman = pacman.Pacman(self.size_maze, self.grid, lives)
+        self.__pacman.start_position()
