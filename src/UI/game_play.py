@@ -1,10 +1,12 @@
 import pygame
 import time
 import string
+from gamedata import GameData
+from direction import Movement, Direction
 
 
 class GamePlay:
-    def __init__(self, screen: pygame.Surface):
+    def __init__(self, screen: pygame.Surface, game_data: GameData):
         self.score = 0
         self.hearts = 3
         self.level_count = 2
@@ -18,14 +20,31 @@ class GamePlay:
         self.border_inside_y2 = pygame.Surface((10, 1300))
         self.border_inside_x3 = pygame.Surface((1760, 10))
         self.border_inside_y3 = pygame.Surface((10, 1260))
+        self.for_two = pygame.Surface((44, 44))
+        self.pacgum = pygame.Surface((10, 10))
+        self.super_pacgum = pygame.Surface((15, 15))
 
+        self.maze = game_data.maze
+        self.pacman = game_data.pacman
+        self.ghost_blue = game_data.ghost_blue
+        self.ghost_red = game_data.ghost_red
+        self.ghost_green = game_data.ghost_green
+        self.ghost_yellow = game_data.ghost_yellow
+        self.pacman_name = "pacman_player"
+        self.pacgums = game_data.regular_pacgums
+        self.super_pacgums = game_data.super_pacgums
+        self.pacman_direction = "_right"
 
+        self.mouth_closed = False
 
         self.border_x.fill((0, 0, 128))
         self.border_y.fill((0, 0, 128))
-
+        self.pacgum.fill((255, 0, 255))
+        self.for_two.fill((0, 0, 255))
+        self.super_pacgum.fill((43, 243, 251))
 
         self.last_switch = time.monotonic()
+        self.last_switch_pacman = time.monotonic()
 
         self.title = pygame.image.load("UI/images/title.png")
         self.title_dark = pygame.image.load("UI/images/title_dark.png")
@@ -34,7 +53,6 @@ class GamePlay:
         self.lives = pygame.image.load("UI/images/LIVES.png")
         self.time = pygame.image.load("UI/images/TIME.png")
         self.heart = pygame.image.load("UI/images/heart.png")
-
         self.current_title = self.title
 
         blue_color = (9, 9, 232)
@@ -56,14 +74,35 @@ class GamePlay:
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_q:
                     return "quit"
+                if event.key == pygame.K_DOWN:
+                    self.pacman.current_position = Movement.update_position_by_direction(self.pacman.current_position, Direction.DOWN)
+                    self.pacman_direction = "_down"
+                if event.key == pygame.K_UP:
+                    self.pacman.current_position = Movement.update_position_by_direction(self.pacman.current_position, Direction.UP)
+                    self.pacman_direction = "_up"
+                if event.key == pygame.K_RIGHT:
+                    self.pacman.current_position = Movement.update_position_by_direction(self.pacman.current_position, Direction.RIGHT)
+                    self.pacman_direction = "_right"
+                if event.key == pygame.K_LEFT:
+                    self.pacman.current_position = Movement.update_position_by_direction(self.pacman.current_position, Direction.LEFT)
+                    self.pacman_direction = "_left"
         return None
 
     def update(self):
+        self.hearts = self.pacman.lives
         now = time.monotonic()
         if now - self.last_switch >= 1:
             self.current_title = self.title_dark if self.current_title == self.title else self.title
             self.time_count -= 1
             self.last_switch = now
+        if now - self.last_switch_pacman >= 0.2:
+            if self.mouth_closed:
+                self.pacman_name = "pacman_player"
+                self.mouth_closed = False
+            else:
+                self.pacman_name = "pacman_closed"
+                self.mouth_closed = True
+            self.last_switch_pacman = now
 
     def draw_text(self, text: str, x, y, max_size):
         for char in text:
@@ -79,7 +118,7 @@ class GamePlay:
             self.screen.blit(image, (x, y))
             x += 32
 
-    def draw(self, maze):
+    def draw(self):
         self.screen.fill((0, 0, 0))
         self.screen.blit(self.border_x, (0, 0))
         self.screen.blit(self.border_y, (1890, 0))
@@ -117,10 +156,18 @@ class GamePlay:
         self.draw_text(f"{self.level_count:02d}", 1140, 350, 1400)
         self.draw_text(f"{self.time_count}", 1530, 350, 1800)
 #########################################################################
-        maze_width = len(maze[1])
-        MAX_MAZE_SIZE = 1080
-        CELL_SIZE = MAX_MAZE_SIZE // maze_width
-        WALL_THICKNESS = max(1, CELL_SIZE // 5)
+        maze = self.maze.maze
+        player = self.pacman
+        pacgums = self.pacgums.pacgums_positions
+        super_pacgums = self.super_pacgums.get_super_pacgums_positions()
+        self.pacman_player = pygame.image.load(f"UI/images/{self.pacman_name}{self.pacman_direction}.png")
+        ghost_yellow = pygame.image.load("UI/images/ghost_yellow.png")
+        ghost_red = pygame.image.load("UI/images/ghost_red.png")
+        ghost_blue = pygame.image.load("UI/images/ghost_blue.png")
+        ghost_green = pygame.image.load("UI/images/ghost_green.png")
+        maze_width = len(maze[0])
+        CELL_SIZE = 44
+        WALL_THICKNESS = 5
 
         self.wall_x = pygame.Surface((CELL_SIZE, WALL_THICKNESS))
         self.wall_y = pygame.Surface((WALL_THICKNESS, CELL_SIZE))
@@ -128,6 +175,7 @@ class GamePlay:
         self.wall_x.fill((255, 255, 255))
         self.wall_y.fill((255, 255, 255))
 
+        maze_width = len(maze[0])
         maze_pixel_size = maze_width * CELL_SIZE
 
         AREA_X = 70
@@ -139,18 +187,37 @@ class GamePlay:
         start_y = AREA_Y + (AREA_HEIGHT - maze_pixel_size) // 2
         x = start_x
         y = start_y
-        for line in maze:
-            for cell in line:
+        for row_index, row in enumerate(maze):
+            for col_index, cell in enumerate(row):
+                if cell & 1 and cell & 2 and cell & 4 and cell & 8:
+                    self.screen.blit(self.for_two, (x, y))
                 if cell & 1:
                     self.screen.blit(self.wall_x, (x, y))
                 if cell & 2:
-                    self.screen.blit(self.wall_y, (x + CELL_SIZE - WALL_THICKNESS, y))
+                    if col_index == len(row) - 1:
+                        self.screen.blit(self.wall_y, (x + CELL_SIZE - WALL_THICKNESS, y))
                 if cell & 4:
-                    self.screen.blit(self.wall_x, (x, y + CELL_SIZE - WALL_THICKNESS))
+                    if row_index == len(maze) - 1:
+                        self.screen.blit(self.wall_x, (x, y + CELL_SIZE - WALL_THICKNESS))
                 if cell & 8:
                     self.screen.blit(self.wall_y, (x, y))
+                if (row_index, col_index) in pacgums:
+                    self.screen.blit(self.pacgum, ((x + 15, y + 15)))
+                if (row_index, col_index) in super_pacgums:
+                    self.screen.blit(self.super_pacgum, ((x + 17, y + 17)))
                 x += CELL_SIZE
             x = start_x
             y += CELL_SIZE
+
+        x_payer, y_player = player.current_position
+        self.screen.blit(self.pacman_player, ((CELL_SIZE * x_payer) + start_x + WALL_THICKNESS * 2, (CELL_SIZE * y_player) + start_y + WALL_THICKNESS * 2))
+        ghost_x, ghost_y = self.ghost_yellow.current_position
+        self.screen.blit(ghost_yellow, ((CELL_SIZE * ghost_x) + start_x + WALL_THICKNESS * 2, (CELL_SIZE * ghost_y) + start_y + WALL_THICKNESS * 2))
+        ghost_x, ghost_y = self.ghost_red.current_position
+        self.screen.blit(ghost_red, ((CELL_SIZE * ghost_x) + start_x + WALL_THICKNESS * 2, (CELL_SIZE * ghost_y) + start_y + WALL_THICKNESS * 2))
+        ghost_x, ghost_y = self.ghost_blue.current_position
+        self.screen.blit(ghost_blue, ((CELL_SIZE * ghost_x) + start_x + WALL_THICKNESS * 2, (CELL_SIZE * ghost_y) + start_y + WALL_THICKNESS * 2))
+        ghost_x, ghost_y = self.ghost_green.current_position
+        self.screen.blit(ghost_green, ((CELL_SIZE * ghost_x) + start_x + WALL_THICKNESS * 2, (CELL_SIZE * ghost_y) + start_y + WALL_THICKNESS * 2))
         pygame.display.flip()
 

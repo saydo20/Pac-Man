@@ -8,9 +8,9 @@ pygame.init()
 screen = pygame.display.set_mode((1900, 1730))
 
 menu = MainMenu(screen)
-game_play = GamePlay(screen)
 config = Config.get_configuration("../config.json")
 game_data = GameData(config)
+game_play = GamePlay(screen, game_data)
 state = "menu"
 running = True
 while running:
@@ -30,7 +30,7 @@ while running:
         if action == "quit":
             running = False
 
-        game_play.draw(game_data.maze.maze)
         game_play.update()
+        game_play.draw()
 
 pygame.quit()
