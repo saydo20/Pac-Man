@@ -17,6 +17,7 @@ class GameData:
 
         # initialize the 4 ghosts
         self.__set_the_ghosts()
+        self.score_per_ghost = config.get('points_per_ghost', 200)
 
         # initialize pacman and set his start location
         self.__set_pacman(config.get('lives', 3))
@@ -24,7 +25,7 @@ class GameData:
         # initialize super pacgums
         self.__super_pacgums = SuperPacgum(self.size_maze)
         self.super_pacgums.set_super_pacgum_score(
-            config['points_per_super_pacgum'])
+            config.get('points_per_super_pacgum', 50))
 
         # initialize regular pacgums
         self.__ghosts_position = [
