@@ -19,7 +19,7 @@ class GameData:
         self.__set_the_ghosts()
 
         # initialize pacman and set his start location
-        self.__set_pacman(config['lives'])
+        self.__set_pacman(config.get('lives', 3))
 
         # initialize super pacgums
         self.__super_pacgums = SuperPacgum(self.size_maze)

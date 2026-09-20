@@ -5,6 +5,7 @@ class Pacman:
     def __init__(self, size_maze: Tuple, grid: List[List], lives: int = 3):
         self.current_position: Tuple
         self.lives = lives
+        self.score: int = 0
         self.__grid = grid
         self.__size_maze: Tuple = size_maze
 
