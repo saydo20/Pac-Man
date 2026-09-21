@@ -51,10 +51,8 @@ class RegularPacgum:
                     continue
                 elif self.__is_position_has_superpacgums(y, x):
                     continue
-                elif self.__is_position_has_ghost(y, x):
-                    continue
                 else:
-                    self.pacgums_positions.append((x, y))
+                    self.pacgums_positions.append((y, x))
                     nb_available_cells += 1
 
         return nb_available_cells
