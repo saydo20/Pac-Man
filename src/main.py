@@ -9,17 +9,15 @@ from parse_config import Config
 
 pygame.init()
 
-# Setup Display and Clock
 screen = pygame.display.set_mode((1900, 1730))
 pygame.display.set_caption("My Game")
-clock = pygame.time.Clock() # Added to control frame rate
+clock = pygame.time.Clock()
 
-# Initialize persistent data
-config = Config.get_configuration("../config.json") # Only read config once
+
+config = Config.get_configuration("../config.json")
 score = Score()
 highscores = Highscores(screen)
 
-# State variables
 state = "menu"
 running = True
 new_game = True
