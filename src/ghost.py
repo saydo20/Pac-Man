@@ -35,10 +35,10 @@ class Ghost:
 
         match self.color:
             case Color.RED:
-                self.current_position = self.__get_right_position(1, 0)
+                self.current_position = self.__get_right_position(0, 0)
             case Color.BLUE:
-                self.current_position = self.__get_right_position(x - 1, 1)
+                self.current_position = self.__get_right_position(x - 1, 0)
             case Color.GREEN:
-                self.current_position = self.__get_right_position(1, y - 1)
+                self.current_position = self.__get_right_position(0, y - 1)
             case Color.YELLOW:
-                self.current_position = self.__get_right_position(x - 1, y - 2)
+                self.current_position = self.__get_right_position(x - 1, y - 1)

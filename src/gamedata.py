@@ -8,13 +8,15 @@ from typing import Dict
 
 
 class GameData:
+    static_grid = []
+
     def __init__(self, config: Dict) -> None:
         # set the maze
         self.size_maze = (15, 15)
         self.maze = MazeGenerator(self.size_maze, False,
                                   (0, 0), (-1, -1), 42)
         self.grid = self.maze.maze
-
+        GameData.static_grid = self.grid
         # initialize the 4 ghosts
         self.__set_the_ghosts()
         self.score_per_ghost = config.get('points_per_ghost', 200)
