@@ -10,7 +10,7 @@ from typing import Dict
 class GameData:
     def __init__(self, config: Dict) -> None:
         # set the maze
-        self.size_maze = (16, 16)
+        self.size_maze = (15, 15)
         self.maze = MazeGenerator(self.size_maze, False,
                                   (0, 0), (-1, -1), 42)
         self.grid = self.maze.maze

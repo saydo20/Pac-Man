@@ -72,8 +72,10 @@ class GamePlay:
             if event.type == pygame.QUIT:
                 return "quit"
             if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_p:
+                    return "pause"
                 if event.key == pygame.K_q:
-                    return "quit"
+                    return "menu"
                 if event.key == pygame.K_DOWN:
                     self.pacman.current_position = Movement.update_position_by_direction(self.pacman.current_position, Direction.DOWN)
                     self.pacman_direction = "_down"
@@ -220,4 +222,3 @@ class GamePlay:
         ghost_x, ghost_y = self.ghost_green.current_position
         self.screen.blit(ghost_green, ((CELL_SIZE * ghost_x) + start_x + WALL_THICKNESS * 2, (CELL_SIZE * ghost_y) + start_y + WALL_THICKNESS * 2))
         pygame.display.flip()
-
