@@ -14,7 +14,7 @@ class RegularPacgum:
         self.__ghosts_position = ghosts_position
 
         # initialize empty list to hold positions of pacgums
-        self.pacgums_positions: List[Tuple] = []
+        self.pacgums_grid: List[List] = [[0 for _ in row] for row in grid]
 
         # get data from config file, and get the available cells for dots
         self.score_pacgum = config.get('points_per_pacgum', 10)
@@ -27,9 +27,6 @@ class RegularPacgum:
         else:
             self.nb_pacgums = self.nb_available_cells
 
-        # get randomly the postions of dots
-        self.pacgums_positions = random.sample(self.pacgums_positions,
-                                               self.nb_pacgums)
 
     def __is_position_has_superpacgums(self, y: int, x: int) -> bool:
         for ps in self.__super_pacgums_position:
@@ -37,22 +34,19 @@ class RegularPacgum:
                 return True
         return False
 
-    def __is_position_has_ghost(self, y: int, x: int) -> bool:
-        return (x, y) in self.__ghosts_position
-
     def __get_nb_available_cells(self, grid: List[List]) -> int:
         nb_available_cells = 0
 
         for y in range(len(grid)):
             for x in range(len(grid[y])):
                 if grid[y][x] == 15:
-                    continue
+                    self.pacgums_grid[y][x] = 0
                 elif (x, y) == self.__pacman_position:
-                    continue
+                    self.pacgums_grid[y][x] = 0
                 elif self.__is_position_has_superpacgums(y, x):
-                    continue
+                    self.pacgums_grid[y][x] = 0
                 else:
-                    self.pacgums_positions.append((y, x))
+                    self.pacgums_grid[y][x] = 1
                     nb_available_cells += 1
 
         return nb_available_cells
