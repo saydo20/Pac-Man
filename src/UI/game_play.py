@@ -160,7 +160,7 @@ class GamePlay:
 #########################################################################
         maze = self.maze.maze
         player = self.pacman
-        pacgums = self.pacgums.pacgums_positions
+        pacgums = self.pacgums.pacgums_grid
         super_pacgums = self.super_pacgums.get_super_pacgums_positions()
         self.pacman_player = pygame.image.load(f"UI/images/{self.pacman_name}{self.pacman_direction}.png")
         ghost_yellow = pygame.image.load("UI/images/ghost_yellow.png")
@@ -203,10 +203,10 @@ class GamePlay:
                         self.screen.blit(self.wall_x, (x, y + CELL_SIZE - WALL_THICKNESS))
                 if cell & 8:
                     self.screen.blit(self.wall_y, (x, y))
-                if (row_index, col_index) in pacgums:
+                if pacgums[row_index][col_index]:
                     self.screen.blit(self.pacgum, ((x + 15, y + 15)))
-                if (row_index, col_index) in super_pacgums:
-                    self.screen.blit(self.super_pacgum, ((x + 17, y + 17)))
+                # if (row_index, col_index) in super_pacgums:
+                #     self.screen.blit(self.super_pacgum, ((x + 17, y + 17)))
                 x += CELL_SIZE
             x = start_x
             y += CELL_SIZE
