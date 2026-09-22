@@ -1,12 +1,5 @@
 from typing import Tuple, List
-from enum import Enum
-
-
-class Color(Enum):
-    RED = 1
-    BLUE = 2
-    GREEN = 3
-    YELLOW = 4
+from enums_helper import Mode, Color
 
 
 class Ghost:
@@ -15,6 +8,7 @@ class Ghost:
         self.color = color
         self.__grid = grid
         self.__size_maze: Tuple = size_maze
+        self.mode = Mode.ATTACK
 
     def __get_right_position(self, x: int, y: int) -> Tuple:
         match self.color:
@@ -33,12 +27,22 @@ class Ghost:
     def set_start_position(self) -> None:
         x, y = self.__size_maze
 
+        # match self.color:
+        #     case Color.RED:
+        #         self.current_position = self.__get_right_position(0, 0)
+        #     case Color.BLUE:
+        #         self.current_position = self.__get_right_position(x - 1, 0)
+        #     case Color.GREEN:
+        #         self.current_position = self.__get_right_position(0, y - 1)
+        #     case Color.YELLOW:
+        #         self.current_position = self.__get_right_position(x - 1, y - 1)
+
         match self.color:
             case Color.RED:
-                self.current_position = self.__get_right_position(0, 0)
+                self.current_position = self.__get_right_position(1, 0)
             case Color.BLUE:
-                self.current_position = self.__get_right_position(x - 1, 0)
+                self.current_position = self.__get_right_position(x - 1, 1)
             case Color.GREEN:
-                self.current_position = self.__get_right_position(0, y - 1)
+                self.current_position = self.__get_right_position(1, y - 1)
             case Color.YELLOW:
-                self.current_position = self.__get_right_position(x - 1, y - 1)
+                self.current_position = self.__get_right_position(x - 2, y - 1)

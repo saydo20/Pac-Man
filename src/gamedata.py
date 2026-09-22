@@ -1,18 +1,11 @@
-from ghost import Ghost, Color
+from ghost import Ghost
 from pacman import Pacman
 from super_pacgums import SuperPacgum
 from regular_pacgums import RegularPacgum
+from enums_helper import Direction, Mode, Color
 
 from mazegenerator import MazeGenerator
 from typing import Dict, Tuple, List
-from enum import Enum
-
-
-class Direction(Enum):
-    UP = 1
-    RIGHT = 2
-    DOWN = 4
-    LEFT = 8
 
 
 class GameData:
@@ -49,7 +42,7 @@ class GameData:
         ]
         self.__regular_pacgums = RegularPacgum(
             config, self.grid, self.pacman.current_position,
-            self.super_pacgums.get_super_pacgums_positions(),
+            self.super_pacgums.positions,
             self.__ghosts_position)
 
     @property
@@ -124,6 +117,17 @@ class GameData:
                     return False
         return True
 
+    def change_mode_player_ghosts(self, pacman_mode: Mode,
+                                  ghost_mode: Mode) -> None:
+        # change the mode of the player
+        self.pacman.mode = pacman_mode
+
+        # change the mode of the ghosts
+        self.ghost_red.mode = ghost_mode
+        self.ghost_yellow.mode = ghost_mode
+        self.ghost_green.mode = ghost_mode
+        self.ghost_blue.mode = ghost_mode
+
     def update_position_by_direction(self, current_position: Tuple,
                                      direction: Direction) -> Tuple:
         x, y = current_position
@@ -135,6 +139,11 @@ class GameData:
                 if self.__can_move(current_position, Direction.UP,
                                    grid_maze):
                     current_position = (x, y - 1)
+                    if current_position in self.super_pacgums.positions:
+                        self.pacman.score += self.super_pacgums.get_super_pacgum_score()
+                        self.change_mode_player_ghosts(Mode.ATTACK, Mode.FLEE)
+                        self.super_pacgums.positions.remove(current_position)
+
                     if grid_pacgums[y][x] == 1:
                         grid_pacgums[y][x] = 0
                         self.pacman.score += self.score_per_pacgum
@@ -143,6 +152,11 @@ class GameData:
                 if self.__can_move(current_position, Direction.DOWN,
                                    grid_maze):
                     current_position = (x, y + 1)
+                    if current_position in self.super_pacgums.positions:
+                        self.pacman.score += self.super_pacgums.get_super_pacgum_score()
+                        self.change_mode_player_ghosts(Mode.ATTACK, Mode.FLEE)
+                        self.super_pacgums.positions.remove(current_position)
+
                     if grid_pacgums[y][x] == 1:
                         grid_pacgums[y][x] = 0
                         self.pacman.score += self.score_per_pacgum
@@ -151,6 +165,11 @@ class GameData:
                 if self.__can_move(current_position, Direction.RIGHT,
                                    grid_maze):
                     current_position = (x + 1, y)
+                    if current_position in self.super_pacgums.positions:
+                        self.pacman.score += self.super_pacgums.get_super_pacgum_score()
+                        self.change_mode_player_ghosts(Mode.ATTACK, Mode.FLEE)
+                        self.super_pacgums.positions.remove(current_position)
+
                     if grid_pacgums[y][x] == 1:
                         grid_pacgums[y][x] = 0
                         self.pacman.score += self.score_per_pacgum
@@ -159,6 +178,11 @@ class GameData:
                 if self.__can_move(current_position, Direction.LEFT,
                                    grid_maze):
                     current_position = (x - 1, y)
+                    if current_position in self.super_pacgums.positions:
+                        self.pacman.score += self.super_pacgums.get_super_pacgum_score()
+                        self.change_mode_player_ghosts(Mode.ATTACK, Mode.FLEE)
+                        self.super_pacgums.positions.remove(current_position)
+
                     if grid_pacgums[y][x] == 1:
                         grid_pacgums[y][x] = 0
                         self.pacman.score += self.score_per_pacgum

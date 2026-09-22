@@ -1,4 +1,5 @@
 from typing import Tuple, List
+from enums_helper import Mode
 
 
 class Pacman:
@@ -8,6 +9,7 @@ class Pacman:
         self.score: int = 0
         self.__grid = grid
         self.__size_maze: Tuple = size_maze
+        self.mode = Mode.FLEE
 
     def start_position(self) -> None:
         width, height = self.__size_maze
