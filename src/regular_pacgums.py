@@ -3,6 +3,7 @@ import random
 
 
 class RegularPacgum:
+
     def __init__(self, config: Dict, grid: List[List],
                  pacman_position: Tuple,
                  super_pacgums_position: List[Tuple],
@@ -26,7 +27,6 @@ class RegularPacgum:
             self.nb_pacgums = self.__pacgums
         else:
             self.nb_pacgums = self.nb_available_cells
-
 
     def __is_position_has_superpacgums(self, y: int, x: int) -> bool:
         for ps in self.__super_pacgums_position:

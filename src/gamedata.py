@@ -4,7 +4,15 @@ from super_pacgums import SuperPacgum
 from regular_pacgums import RegularPacgum
 
 from mazegenerator import MazeGenerator
-from typing import Dict
+from typing import Dict, Tuple, List
+from enum import Enum
+
+
+class Direction(Enum):
+    UP = 1
+    RIGHT = 2
+    DOWN = 4
+    LEFT = 8
 
 
 class GameData:
@@ -16,10 +24,13 @@ class GameData:
         self.maze = MazeGenerator(self.size_maze, False,
                                   (0, 0), (-1, -1), 42)
         self.grid = self.maze.maze
-        GameData.static_grid = self.grid
+
         # initialize the 4 ghosts
         self.__set_the_ghosts()
         self.score_per_ghost = config.get('points_per_ghost', 200)
+
+        # get the score of each pacgum
+        self.score_per_pacgum: int = config.get('points_per_pacgum', 10)
 
         # initialize pacman and set his start location
         self.__set_pacman(config.get('lives', 3))
@@ -93,3 +104,64 @@ class GameData:
     def __set_pacman(self, lives: int) -> None:
         self.__pacman = Pacman(self.size_maze, self.grid, lives)
         self.__pacman.start_position()
+
+    def __can_move(self, current_position: Tuple, direction: Direction,
+                   grid: List[List]) -> bool:
+        x, y = current_position
+
+        match direction:
+            case Direction.UP:
+                if grid[y][x] & Direction.UP.value > 0:
+                    return False
+            case Direction.RIGHT:
+                if grid[y][x] & Direction.RIGHT.value > 0:
+                    return False
+            case Direction.DOWN:
+                if grid[y][x] & Direction.DOWN.value > 0:
+                    return False
+            case Direction.LEFT:
+                if grid[y][x] & Direction.LEFT.value > 0:
+                    return False
+        return True
+
+    def update_position_by_direction(self, current_position: Tuple,
+                                     direction: Direction) -> Tuple:
+        x, y = current_position
+        grid_maze = self.grid
+        grid_pacgums = self.regular_pacgums.pacgums_grid
+
+        match direction:
+            case Direction.UP:
+                if self.__can_move(current_position, Direction.UP,
+                                   grid_maze):
+                    current_position = (x, y - 1)
+                    if grid_pacgums[y][x] == 1:
+                        grid_pacgums[y][x] = 0
+                        self.pacman.score += self.score_per_pacgum
+                    return current_position
+            case Direction.DOWN:
+                if self.__can_move(current_position, Direction.DOWN,
+                                   grid_maze):
+                    current_position = (x, y + 1)
+                    if grid_pacgums[y][x] == 1:
+                        grid_pacgums[y][x] = 0
+                        self.pacman.score += self.score_per_pacgum
+                    return current_position
+            case Direction.RIGHT:
+                if self.__can_move(current_position, Direction.RIGHT,
+                                   grid_maze):
+                    current_position = (x + 1, y)
+                    if grid_pacgums[y][x] == 1:
+                        grid_pacgums[y][x] = 0
+                        self.pacman.score += self.score_per_pacgum
+                    return current_position
+            case Direction.LEFT:
+                if self.__can_move(current_position, Direction.LEFT,
+                                   grid_maze):
+                    current_position = (x - 1, y)
+                    if grid_pacgums[y][x] == 1:
+                        grid_pacgums[y][x] = 0
+                        self.pacman.score += self.score_per_pacgum
+                    return current_position
+
+        return current_position

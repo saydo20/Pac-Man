@@ -1,8 +1,7 @@
 import pygame
 import time
 import string
-from gamedata import GameData
-from direction import Movement, Direction
+from gamedata import GameData, Direction
 
 
 class GamePlay:
@@ -24,15 +23,16 @@ class GamePlay:
         self.pacgum = pygame.Surface((10, 10))
         self.super_pacgum = pygame.Surface((15, 15))
 
-        self.maze = game_data.maze
-        self.pacman = game_data.pacman
-        self.ghost_blue = game_data.ghost_blue
-        self.ghost_red = game_data.ghost_red
-        self.ghost_green = game_data.ghost_green
-        self.ghost_yellow = game_data.ghost_yellow
+        self.game_data = game_data
+        self.maze = self.game_data.maze
+        self.pacman = self.game_data.pacman
+        self.ghost_blue = self.game_data.ghost_blue
+        self.ghost_red = self.game_data.ghost_red
+        self.ghost_green = self.game_data.ghost_green
+        self.ghost_yellow = self.game_data.ghost_yellow
         self.pacman_name = "pacman_player"
-        self.pacgums = game_data.regular_pacgums
-        self.super_pacgums = game_data.super_pacgums
+        self.pacgums = self.game_data.regular_pacgums
+        self.super_pacgums = self.game_data.super_pacgums
         self.pacman_direction = "_right"
 
         self.mouth_closed = False
@@ -77,16 +77,16 @@ class GamePlay:
                 if event.key == pygame.K_q:
                     return "menu"
                 if event.key == pygame.K_DOWN:
-                    self.pacman.current_position = Movement.update_position_by_direction(self.pacman.current_position, Direction.DOWN)
+                    self.pacman.current_position = self.game_data.update_position_by_direction(self.pacman.current_position, Direction.DOWN)
                     self.pacman_direction = "_down"
                 if event.key == pygame.K_UP:
-                    self.pacman.current_position = Movement.update_position_by_direction(self.pacman.current_position, Direction.UP)
+                    self.pacman.current_position = self.game_data.update_position_by_direction(self.pacman.current_position, Direction.UP)
                     self.pacman_direction = "_up"
                 if event.key == pygame.K_RIGHT:
-                    self.pacman.current_position = Movement.update_position_by_direction(self.pacman.current_position, Direction.RIGHT)
+                    self.pacman.current_position = self.game_data.update_position_by_direction(self.pacman.current_position, Direction.RIGHT)
                     self.pacman_direction = "_right"
                 if event.key == pygame.K_LEFT:
-                    self.pacman.current_position = Movement.update_position_by_direction(self.pacman.current_position, Direction.LEFT)
+                    self.pacman.current_position = self.game_data.update_position_by_direction(self.pacman.current_position, Direction.LEFT)
                     self.pacman_direction = "_left"
         return None
 
