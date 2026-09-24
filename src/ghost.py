@@ -27,16 +27,6 @@ class Ghost:
     def set_start_position(self) -> None:
         x, y = self.__size_maze
 
-        # match self.color:
-        #     case Color.RED:
-        #         self.current_position = self.__get_right_position(0, 0)
-        #     case Color.BLUE:
-        #         self.current_position = self.__get_right_position(x - 1, 0)
-        #     case Color.GREEN:
-        #         self.current_position = self.__get_right_position(0, y - 1)
-        #     case Color.YELLOW:
-        #         self.current_position = self.__get_right_position(x - 1, y - 1)
-
         match self.color:
             case Color.RED:
                 self.current_position = self.__get_right_position(1, 0)
@@ -45,4 +35,4 @@ class Ghost:
             case Color.GREEN:
                 self.current_position = self.__get_right_position(1, y - 1)
             case Color.YELLOW:
-                self.current_position = self.__get_right_position(x - 2, y - 1)
+                self.current_position = self.__get_right_position(x - 1, y - 2)

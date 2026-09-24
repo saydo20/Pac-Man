@@ -20,13 +20,7 @@ class RegularPacgum:
         # get data from config file, and get the available cells for dots
         self.score_pacgum = config.get('points_per_pacgum', 10)
         self.nb_available_cells = self.__get_nb_available_cells(grid)
-        self.__pacgums = config.get('pacgum', self.nb_available_cells)
-
-        # get the number of pacgums
-        if self.__pacgums <= self.nb_available_cells:
-            self.nb_pacgums = self.__pacgums
-        else:
-            self.nb_pacgums = self.nb_available_cells
+        self.nb_pacgums = self.nb_available_cells
 
     def __is_position_has_superpacgums(self, y: int, x: int) -> bool:
         for ps in self.__super_pacgums_position:
