@@ -6,10 +6,6 @@ from gamedata import GameData, Direction
 
 class GamePlay:
     def __init__(self, screen: pygame.Surface, game_data: GameData):
-        self.score = 0
-        self.hearts = 3
-        self.level_count = 2
-        self.time_count = 90
         self.screen = screen
         self.border_x = pygame.Surface((1900, 10))
         self.border_y = pygame.Surface((10, 1730))
@@ -19,7 +15,7 @@ class GamePlay:
         self.border_inside_y2 = pygame.Surface((10, 1300))
         self.border_inside_x3 = pygame.Surface((1760, 10))
         self.border_inside_y3 = pygame.Surface((10, 1260))
-        self.for_two = pygame.Surface((44, 44))
+        self.for_two = pygame.Surface((70, 70))
         self.pacgum = pygame.Surface((10, 10))
         self.super_pacgum = pygame.Surface((15, 15))
 
@@ -36,6 +32,11 @@ class GamePlay:
         self.pacman_direction = "_right"
 
         self.mouth_closed = False
+
+        self.score = self.pacman.score
+        self.hearts = self.pacman.lives
+        self.level_count = 2
+        self.time_count = 90
 
         self.border_x.fill((0, 0, 128))
         self.border_y.fill((0, 0, 128))
@@ -88,6 +89,8 @@ class GamePlay:
                 if event.key == pygame.K_LEFT:
                     self.pacman.current_position = self.game_data.update_position_by_direction(self.pacman.current_position, Direction.LEFT)
                     self.pacman_direction = "_left"
+                self.hearts = self.pacman.lives
+                self.score = self.pacman.score
         return None
 
     def update(self):
@@ -168,7 +171,7 @@ class GamePlay:
         ghost_blue = pygame.image.load("UI/images/ghost_blue.png")
         ghost_green = pygame.image.load("UI/images/ghost_green.png")
         maze_width = len(maze[0])
-        CELL_SIZE = 44
+        CELL_SIZE = 70
         WALL_THICKNESS = 5
 
         self.wall_x = pygame.Surface((CELL_SIZE, WALL_THICKNESS))
@@ -204,7 +207,7 @@ class GamePlay:
                 if cell & 8:
                     self.screen.blit(self.wall_y, (x, y))
                 if pacgums[row_index][col_index]:
-                    self.screen.blit(self.pacgum, ((x + 15, y + 15)))
+                    self.screen.blit(self.pacgum, ((x + 30, y + 30)))
                 if (col_index, row_index) in super_pacgums:
                     self.screen.blit(self.super_pacgum, ((x + 17, y + 17)))
                 x += CELL_SIZE
