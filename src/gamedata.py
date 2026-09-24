@@ -138,7 +138,6 @@ class GameData:
         self.size_maze = (15, 15)
         self.maze = MazeGenerator(self.size_maze, False,
                                   (0, 0), (-1, -1), 0)
-        self.grid = self.maze.maze
 
         self.__pacman.start_position()
         self.__pacman.mode = Mode.FLEE
