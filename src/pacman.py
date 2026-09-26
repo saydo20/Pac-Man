@@ -1,21 +1,21 @@
-from typing import Tuple, List
+from typing import Tuple
 from enums_helper import Mode
 
 
 class Pacman:
-    def __init__(self, size_maze: Tuple, grid: List[List], lives: int = 3):
+    def __init__(self, lives: int = 3):
         self.current_position: Tuple
         self.lives = lives
         self.score: int = 0
-        self.__grid = grid
-        self.__size_maze: Tuple = size_maze
+        self.grid = []
+        self.size_maze: Tuple = (0, 0)
         self.mode = Mode.FLEE
 
     def start_position(self) -> None:
-        width, height = self.__size_maze
+        width, height = self.size_maze
         x = width // 2
         y = height // 2
 
-        while self.__grid[y][x] == 15:
+        while self.grid[y][x] == 15:
             y -= 1
         self.current_position = (x, y)

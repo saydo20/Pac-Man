@@ -1,25 +1,26 @@
 from typing import List, Dict, Tuple
-import random
 
 
 class RegularPacgum:
 
-    def __init__(self, config: Dict, grid: List[List],
+    def __init__(self, config: Dict,
                  pacman_position: Tuple,
                  super_pacgums_position: List[Tuple],
-                 ghosts_position: List[Tuple]) -> None:
+                 grid: List[List]) -> None:
 
-        # get the position of ghosts, super_pacgums, pacman
+        # get the position of super_pacgums, pacman
         self.__pacman_position = pacman_position
         self.__super_pacgums_position = super_pacgums_position
-        self.__ghosts_position = ghosts_position
+
+        self.__grid = grid
 
         # initialize empty list to hold positions of pacgums
-        self.pacgums_grid: List[List] = [[0 for _ in row] for row in grid]
+        self.pacgums_grid: List[List] = [[0 for _ in row] for
+                                         row in self.__grid]
 
         # get data from config file, and get the available cells for dots
         self.score_pacgum = config.get('points_per_pacgum', 10)
-        self.nb_available_cells = self.__get_nb_available_cells(grid)
+        self.nb_available_cells = self.__get_nb_available_cells(self.__grid)
         self.nb_pacgums = self.nb_available_cells
 
     def __is_position_has_superpacgums(self, y: int, x: int) -> bool:

@@ -34,17 +34,9 @@ class GameData:
         self.__super_pacgums.set_super_pacgum_score(
             config.get('points_per_super_pacgum', 50))
 
-        # initialize regular pacgums
-        self.__ghosts_position = [
-            self.__ghost_red.current_position,
-            self.__ghost_yellow.current_position,
-            self.__ghost_green.current_position,
-            self.__ghost_blue.current_position,
-        ]
         self.__regular_pacgums = RegularPacgum(
-            config, self.grid, self.__pacman.current_position,
-            self.__super_pacgums.positions,
-            self.__ghosts_position)
+            config, self.__pacman.current_position,
+            self.__super_pacgums.positions, self.grid)
 
     @property
     def ghost_red(self) -> Ghost:
@@ -76,27 +68,33 @@ class GameData:
 
     def __set_the_ghosts(self) -> None:
         # initialize red ghost and his start location
-        self.__ghost_red = Ghost(self.size_maze, Color.RED,
-                                 self.grid)
+        self.__ghost_red = Ghost(Color.RED)
+        self.__ghost_red.grid = self.grid
+        self.__ghost_red.size_maze = self.size_maze
         self.__ghost_red.set_start_position()
 
         # initialize blue ghost and his start location
-        self.__ghost_blue = Ghost(self.size_maze, Color.BLUE,
-                                  self.grid)
+        self.__ghost_blue = Ghost(Color.BLUE)
+        self.__ghost_blue.grid = self.grid
+        self.__ghost_blue.size_maze = self.size_maze
         self.__ghost_blue.set_start_position()
 
         # initialize green ghost and his start location
-        self.__ghost_green = Ghost(self.size_maze, Color.GREEN,
-                                   self.grid)
+        self.__ghost_green = Ghost(Color.GREEN)
+        self.__ghost_green.grid = self.grid
+        self.__ghost_green.size_maze = self.size_maze
         self.__ghost_green.set_start_position()
 
         # initialize yellow ghost and his start location
-        self.__ghost_yellow = Ghost(self.size_maze, Color.YELLOW,
-                                    self.grid)
+        self.__ghost_yellow = Ghost(Color.YELLOW)
+        self.__ghost_yellow.grid = self.grid
+        self.__ghost_yellow.size_maze = self.size_maze
         self.__ghost_yellow.set_start_position()
 
     def __set_pacman(self, lives: int) -> None:
-        self.__pacman = Pacman(self.size_maze, self.grid, lives)
+        self.__pacman = Pacman(lives)
+        self.__pacman.grid = self.grid
+        self.__pacman.size_maze = self.size_maze
         self.__pacman.start_position()
 
     def __can_move(self, current_position: Tuple, direction: Direction,
@@ -137,6 +135,7 @@ class GameData:
         # set the maze
         self.maze = MazeGenerator(self.size_maze, False,
                                   (0, 0), (-1, -1), 0)
+        self.grid = self.maze.maze
 
         self.__pacman.start_position()
         self.__pacman.mode = Mode.FLEE
@@ -145,28 +144,26 @@ class GameData:
         self.__super_pacgums.get_super_pacgums_positions()
 
         self.__ghost_blue.set_start_position()
+        self.__ghost_blue.previous_position = self.ghost_blue.current_position
         self.__ghost_blue.mode = Mode.ATTACK
 
         self.__ghost_green.set_start_position()
+        self.__ghost_green.previous_position = (
+            self.__ghost_green.current_position)
         self.__ghost_green.mode = Mode.ATTACK
 
         self.__ghost_yellow.set_start_position()
+        self.__ghost_yellow.previous_position = (
+            self.__ghost_yellow.current_position)
         self.__ghost_yellow.mode = Mode.ATTACK
 
         self.__ghost_red.set_start_position()
+        self.__ghost_red.previous_position = self.__ghost_red.current_position
         self.__ghost_red.mode = Mode.ATTACK
 
-        # initialize regular pacgums
-        self.__ghosts_position = [
-            self.__ghost_red.current_position,
-            self.__ghost_yellow.current_position,
-            self.__ghost_green.current_position,
-            self.__ghost_blue.current_position,
-        ]
         self.__regular_pacgums = RegularPacgum(
-            self.config, self.grid, self.__pacman.current_position,
-            self.__super_pacgums.positions,
-            self.__ghosts_position)
+            self.config, self.__pacman.current_position,
+            self.__super_pacgums.positions, self.grid)
 
     def change_mode_player_ghosts(self, pacman_mode: Mode,
                                   ghost_mode: Mode) -> None:
