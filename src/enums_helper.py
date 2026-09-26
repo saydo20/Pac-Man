@@ -11,6 +11,8 @@ class Direction(Enum):
 class Mode(Enum):
     ATTACK = 1
     FLEE = 2
+    DEAD = 3
+    WIN = 4
 
 
 class Color(Enum):

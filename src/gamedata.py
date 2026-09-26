@@ -9,9 +9,10 @@ from typing import Dict, Tuple, List
 
 
 class GameData:
-    static_grid = []
 
     def __init__(self, config: Dict) -> None:
+        self.config = config
+
         # set the maze
         self.size_maze = (15, 15)
         self.maze = MazeGenerator(self.size_maze, False,
@@ -30,19 +31,19 @@ class GameData:
 
         # initialize super pacgums
         self.__super_pacgums = SuperPacgum(self.size_maze)
-        self.super_pacgums.set_super_pacgum_score(
+        self.__super_pacgums.set_super_pacgum_score(
             config.get('points_per_super_pacgum', 50))
 
         # initialize regular pacgums
         self.__ghosts_position = [
-            self.ghost_red.current_position,
-            self.ghost_yellow.current_position,
-            self.ghost_green.current_position,
-            self.ghost_blue.current_position,
+            self.__ghost_red.current_position,
+            self.__ghost_yellow.current_position,
+            self.__ghost_green.current_position,
+            self.__ghost_blue.current_position,
         ]
         self.__regular_pacgums = RegularPacgum(
-            config, self.grid, self.pacman.current_position,
-            self.super_pacgums.positions,
+            config, self.grid, self.__pacman.current_position,
+            self.__super_pacgums.positions,
             self.__ghosts_position)
 
     @property
@@ -117,6 +118,56 @@ class GameData:
                     return False
         return True
 
+    def __add_score_to_pacman(self, current_position: Tuple,
+                              grid_pacgums: List[List]) -> None:
+        x, y = current_position
+
+        # check if the pacman eat super_pacgum
+        if current_position in self.super_pacgums.positions:
+            self.pacman.score += self.super_pacgums.get_super_pacgum_score()
+            self.change_mode_player_ghosts(Mode.ATTACK, Mode.FLEE)
+            self.super_pacgums.positions.remove(current_position)
+
+        # check if pacman eat regular_pacgum
+        if grid_pacgums[y][x] == 1:
+            grid_pacgums[y][x] = 0
+            self.pacman.score += self.score_per_pacgum
+
+    def generate_next_level(self) -> None:
+        # set the maze
+        self.maze = MazeGenerator(self.size_maze, False,
+                                  (0, 0), (-1, -1), 0)
+
+        self.__pacman.start_position()
+        self.__pacman.mode = Mode.FLEE
+
+        # initialize super pacgums
+        self.__super_pacgums.get_super_pacgums_positions()
+
+        self.__ghost_blue.set_start_position()
+        self.__ghost_blue.mode = Mode.ATTACK
+
+        self.__ghost_green.set_start_position()
+        self.__ghost_green.mode = Mode.ATTACK
+
+        self.__ghost_yellow.set_start_position()
+        self.__ghost_yellow.mode = Mode.ATTACK
+
+        self.__ghost_red.set_start_position()
+        self.__ghost_red.mode = Mode.ATTACK
+
+        # initialize regular pacgums
+        self.__ghosts_position = [
+            self.__ghost_red.current_position,
+            self.__ghost_yellow.current_position,
+            self.__ghost_green.current_position,
+            self.__ghost_blue.current_position,
+        ]
+        self.__regular_pacgums = RegularPacgum(
+            self.config, self.grid, self.__pacman.current_position,
+            self.__super_pacgums.positions,
+            self.__ghosts_position)
+
     def change_mode_player_ghosts(self, pacman_mode: Mode,
                                   ghost_mode: Mode) -> None:
         # change the mode of the player
@@ -139,53 +190,25 @@ class GameData:
                 if self.__can_move(current_position, Direction.UP,
                                    grid_maze):
                     current_position = (x, y - 1)
-                    if current_position in self.super_pacgums.positions:
-                        self.pacman.score += self.super_pacgums.get_super_pacgum_score()
-                        self.change_mode_player_ghosts(Mode.ATTACK, Mode.FLEE)
-                        self.super_pacgums.positions.remove(current_position)
-
-                    if grid_pacgums[y][x] == 1:
-                        grid_pacgums[y][x] = 0
-                        self.pacman.score += self.score_per_pacgum
+                    self.__add_score_to_pacman(current_position, grid_pacgums)
                     return current_position
             case Direction.DOWN:
                 if self.__can_move(current_position, Direction.DOWN,
                                    grid_maze):
                     current_position = (x, y + 1)
-                    if current_position in self.super_pacgums.positions:
-                        self.pacman.score += self.super_pacgums.get_super_pacgum_score()
-                        self.change_mode_player_ghosts(Mode.ATTACK, Mode.FLEE)
-                        self.super_pacgums.positions.remove(current_position)
-
-                    if grid_pacgums[y][x] == 1:
-                        grid_pacgums[y][x] = 0
-                        self.pacman.score += self.score_per_pacgum
+                    self.__add_score_to_pacman(current_position, grid_pacgums)
                     return current_position
             case Direction.RIGHT:
                 if self.__can_move(current_position, Direction.RIGHT,
                                    grid_maze):
                     current_position = (x + 1, y)
-                    if current_position in self.super_pacgums.positions:
-                        self.pacman.score += self.super_pacgums.get_super_pacgum_score()
-                        self.change_mode_player_ghosts(Mode.ATTACK, Mode.FLEE)
-                        self.super_pacgums.positions.remove(current_position)
-
-                    if grid_pacgums[y][x] == 1:
-                        grid_pacgums[y][x] = 0
-                        self.pacman.score += self.score_per_pacgum
+                    self.__add_score_to_pacman(current_position, grid_pacgums)
                     return current_position
             case Direction.LEFT:
                 if self.__can_move(current_position, Direction.LEFT,
                                    grid_maze):
                     current_position = (x - 1, y)
-                    if current_position in self.super_pacgums.positions:
-                        self.pacman.score += self.super_pacgums.get_super_pacgum_score()
-                        self.change_mode_player_ghosts(Mode.ATTACK, Mode.FLEE)
-                        self.super_pacgums.positions.remove(current_position)
-
-                    if grid_pacgums[y][x] == 1:
-                        grid_pacgums[y][x] = 0
-                        self.pacman.score += self.score_per_pacgum
+                    self.__add_score_to_pacman(current_position, grid_pacgums)
                     return current_position
 
         return current_position
