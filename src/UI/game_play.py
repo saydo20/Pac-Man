@@ -2,6 +2,7 @@ import pygame
 import time
 import string
 from gamedata import GameData, Direction
+from 
 
 
 class GamePlay:
@@ -96,10 +97,14 @@ class GamePlay:
     def update(self):
         self.hearts = self.pacman.lives
         now = time.monotonic()
-        if now - self.last_switch >= 1:
+        if now - self.last_switch >= 0.4:
             self.current_title = self.title_dark if self.current_title == self.title else self.title
             self.time_count -= 1
             self.last_switch = now
+            self.ghost_blue.move_ghost(self.pacman.current_position)
+            self.ghost_green.move_ghost(self.pacman.current_position)
+            self.ghost_red.move_ghost(self.pacman.current_position)
+            self.ghost_yellow.move_ghost(self.pacman.current_position)
         if now - self.last_switch_pacman >= 0.2:
             if self.mouth_closed:
                 self.pacman_name = "pacman_player"
@@ -124,7 +129,6 @@ class GamePlay:
             x += 32
 
     def draw(self):
-        print(self.pacman.mode)
         self.screen.fill((0, 0, 0))
         self.screen.blit(self.border_x, (0, 0))
         self.screen.blit(self.border_y, (1890, 0))
