@@ -2,7 +2,7 @@ import pygame
 import time
 import string
 from gamedata import GameData, Direction
-from 
+from enums_helper import Mode
 
 
 class GamePlay:
@@ -23,6 +23,7 @@ class GamePlay:
         self.game_data = game_data
         self.maze = self.game_data.maze
         self.pacman = self.game_data.pacman
+        self.pacman_mode = Mode.FLEE.name.lower()
         self.ghost_blue = self.game_data.ghost_blue
         self.ghost_red = self.game_data.ghost_red
         self.ghost_green = self.game_data.ghost_green
@@ -46,6 +47,7 @@ class GamePlay:
         self.super_pacgum.fill((43, 243, 251))
 
         self.last_switch = time.monotonic()
+        self.attack = float('inf')
         self.last_switch_pacman = time.monotonic()
 
         self.title = pygame.image.load("UI/images/title.png")
@@ -105,6 +107,7 @@ class GamePlay:
             self.ghost_green.move_ghost(self.pacman.current_position)
             self.ghost_red.move_ghost(self.pacman.current_position)
             self.ghost_yellow.move_ghost(self.pacman.current_position)
+
         if now - self.last_switch_pacman >= 0.2:
             if self.mouth_closed:
                 self.pacman_name = "pacman_player"
@@ -113,6 +116,11 @@ class GamePlay:
                 self.pacman_name = "pacman_closed"
                 self.mouth_closed = True
             self.last_switch_pacman = now
+        if self.pacman.mode == Mode.ATTACK and self.pacman_mode == "flee":
+            self.attack = time.monotonic()
+        if now - self.attack >= 3:
+            self.game_data.change_mode_player_ghosts(Mode.FLEE, Mode.ATTACK)
+        self.pacman_mode = self.pacman.mode.name.lower()
 
     def draw_text(self, text: str, x, y, max_size):
         for char in text:
@@ -170,7 +178,7 @@ class GamePlay:
         player = self.pacman
         pacgums = self.pacgums.pacgums_grid
         super_pacgums = self.super_pacgums.positions
-        self.pacman_player = pygame.image.load(f"UI/images/{self.pacman_name}{self.pacman_direction}.png")
+        self.pacman_player = pygame.image.load(f"UI/images/{self.pacman_name}{self.pacman_direction}_{self.pacman_mode}.png")
         ghost_yellow = pygame.image.load("UI/images/ghost_yellow.png")
         ghost_red = pygame.image.load("UI/images/ghost_red.png")
         ghost_blue = pygame.image.load("UI/images/ghost_blue.png")
