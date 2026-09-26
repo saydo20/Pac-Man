@@ -124,6 +124,7 @@ class GamePlay:
             x += 32
 
     def draw(self):
+        print(self.pacman.mode)
         self.screen.fill((0, 0, 0))
         self.screen.blit(self.border_x, (0, 0))
         self.screen.blit(self.border_y, (1890, 0))
