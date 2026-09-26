@@ -1,5 +1,6 @@
 from typing import Tuple, List
 from enums_helper import Mode, Color
+from bfs import BFS
 
 
 class Ghost:
@@ -36,3 +37,8 @@ class Ghost:
                 self.current_position = self.__get_right_position(1, y - 1)
             case Color.YELLOW:
                 self.current_position = self.__get_right_position(x - 1, y - 2)
+
+    def move_ghost(self, pacman_position: Tuple) -> Tuple:
+        self.current_position = BFS.shortest_path(self.__grid,
+                                                  self.current_position,
+                                                  pacman_position)

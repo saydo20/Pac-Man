@@ -135,7 +135,6 @@ class GameData:
 
     def generate_next_level(self) -> None:
         # set the maze
-        self.size_maze = (15, 15)
         self.maze = MazeGenerator(self.size_maze, False,
                                   (0, 0), (-1, -1), 0)
 
