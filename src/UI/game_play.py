@@ -32,6 +32,9 @@ class GamePlay:
         self.pacgums = self.game_data.regular_pacgums
         self.super_pacgums = self.game_data.super_pacgums
         self.pacman_direction = "_right"
+        self.requested_direction = Direction.RIGHT
+
+        self.pacman_prev_position = self.pacman.current_position
 
         self.mouth_closed = False
 
@@ -49,6 +52,7 @@ class GamePlay:
         self.last_switch = time.monotonic()
         self.attack = float('inf')
         self.last_switch_pacman = time.monotonic()
+        self.last_move_time = time.monotonic()
 
         self.title = pygame.image.load("UI/images/title.png")
         self.title_dark = pygame.image.load("UI/images/title_dark.png")
@@ -81,44 +85,57 @@ class GamePlay:
                 if event.key == pygame.K_q:
                     return "menu"
                 if event.key == pygame.K_DOWN:
-                    self.pacman.current_position = self.game_data.update_position_by_direction(self.pacman.current_position, Direction.DOWN)
+                    self.requested_direction = Direction.DOWN
                     self.pacman_direction = "_down"
                 if event.key == pygame.K_UP:
-                    self.pacman.current_position = self.game_data.update_position_by_direction(self.pacman.current_position, Direction.UP)
+                    self.requested_direction = Direction.UP
                     self.pacman_direction = "_up"
                 if event.key == pygame.K_RIGHT:
-                    self.pacman.current_position = self.game_data.update_position_by_direction(self.pacman.current_position, Direction.RIGHT)
+                    self.requested_direction = Direction.RIGHT
                     self.pacman_direction = "_right"
                 if event.key == pygame.K_LEFT:
-                    self.pacman.current_position = self.game_data.update_position_by_direction(self.pacman.current_position, Direction.LEFT)
+                    self.requested_direction = Direction.LEFT
                     self.pacman_direction = "_left"
-                self.hearts = self.pacman.lives
-                self.score = self.pacman.score
+
+        self.hearts = self.pacman.lives
+        self.score = self.pacman.score
         return None
 
     def update(self):
+        if self.pacman.current_position in [self.ghost_yellow.current_position,
+                                            self.ghost_red.current_position,
+                                            self.ghost_green.current_position,
+                                            self.ghost_blue.current_position]:
+            self.pacman.lives -= 1
+            self.pacman.start_position()
         self.hearts = self.pacman.lives
         now = time.monotonic()
-        if now - self.last_switch >= 0.4:
+        if now - self.last_move_time >= 0.2:
+            self.pacman_prev_position = self.pacman.current_position
+            self.pacman.current_position = self.game_data.update_position_by_direction(
+                self.pacman.current_position, self.requested_direction
+            )
+            self.last_move_time = now
+        if now - self.last_switch >= 1:
             self.current_title = self.title_dark if self.current_title == self.title else self.title
             self.time_count -= 1
             self.last_switch = now
-            self.ghost_blue.move_ghost(self.pacman.current_position)
-            self.ghost_green.move_ghost(self.pacman.current_position)
-            self.ghost_red.move_ghost(self.pacman.current_position)
-            self.ghost_yellow.move_ghost(self.pacman.current_position)
 
-        if now - self.last_switch_pacman >= 0.2:
+        if now - self.last_switch_pacman >= 0.5:
             if self.mouth_closed:
                 self.pacman_name = "pacman_player"
                 self.mouth_closed = False
             else:
                 self.pacman_name = "pacman_closed"
                 self.mouth_closed = True
+            self.ghost_blue.move_ghost(self.pacman.current_position)
+            self.ghost_green.move_ghost(self.pacman.current_position)
+            self.ghost_red.move_ghost(self.pacman.current_position)
+            self.ghost_yellow.move_ghost(self.pacman.current_position)
             self.last_switch_pacman = now
         if self.pacman.mode == Mode.ATTACK and self.pacman_mode == "flee":
             self.attack = time.monotonic()
-        if now - self.attack >= 3:
+        if now - self.attack >= 9:
             self.game_data.change_mode_player_ghosts(Mode.FLEE, Mode.ATTACK)
         self.pacman_mode = self.pacman.mode.name.lower()
 
@@ -227,8 +244,19 @@ class GamePlay:
             x = start_x
             y += CELL_SIZE
 
-        x_payer, y_player = player.current_position
-        self.screen.blit(self.pacman_player, ((CELL_SIZE * x_payer) + start_x + WALL_THICKNESS * 2, (CELL_SIZE * y_player) + start_y + WALL_THICKNESS * 2))
+        now = time.monotonic()
+        t = min((now - self.last_move_time) / 0.2, 1.0)
+
+        prev_x, prev_y = self.pacman_prev_position
+        curr_x, curr_y = player.current_position
+
+        interp_x = prev_x + (curr_x - prev_x) * t
+        interp_y = prev_y + (curr_y - prev_y) * t
+
+        pixel_x = int(CELL_SIZE * interp_x) + start_x + WALL_THICKNESS * 2
+        pixel_y = int(CELL_SIZE * interp_y) + start_y + WALL_THICKNESS * 2
+
+        self.screen.blit(self.pacman_player, (pixel_x, pixel_y))
         ghost_x, ghost_y = self.ghost_yellow.current_position
         self.screen.blit(ghost_yellow, ((CELL_SIZE * ghost_x) + start_x + WALL_THICKNESS * 2, (CELL_SIZE * ghost_y) + start_y + WALL_THICKNESS * 2))
         ghost_x, ghost_y = self.ghost_red.current_position
