@@ -20,9 +20,11 @@ clock = pygame.time.Clock()
 
 if len(argv) > 1:
     file_name = argv[1]
-else:
-    file_name = "config.json"
-config = Config.get_configuration(file_name)
+
+try:
+    config = Config.get_configuration(file_name)
+except (FileNotFoundError, PermissionError, Exception):
+    config = Config.get_configuration("config.json")
 
 score = Score()
 highscores = Highscores(screen)
