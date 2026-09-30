@@ -250,8 +250,8 @@ class GamePlay:
                 self.pacman.reset_to_spawn()
                 for g in self.ghosts:
                     g.reset_to_spawn()
-                if self.pacman.lives <= 0:
-                    print("Game Over")
+                if self.pacman.lives == 0:
+                    return "game_over"
                 break
 
         if self.game_data.pacman.mode == Mode.ATTACK and self.pacman.pacman_mode == "flee":

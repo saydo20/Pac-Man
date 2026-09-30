@@ -3,6 +3,7 @@ from UI.main_menu import MainMenu
 from UI.game_play import GamePlay
 from UI.pause import Pause
 from UI.highscores import Highscores
+from UI.game_over import GameOver
 from score import Score
 from gamedata import GameData
 from parse_config import Config
@@ -32,6 +33,7 @@ while running:
             menu = MainMenu(screen)
             game_data = GameData(config)
             pause = Pause(screen)
+            game_over = GameOver(screen)
             game_play = GamePlay(screen, game_data)
             new_game = False
             
@@ -58,7 +60,8 @@ while running:
             state = "menu"
             new_game = True
             
-        game_play.update()
+        if game_play.update() == "game_over":
+            state = "game_over"
         game_play.draw()
 
     elif state == "pause":
@@ -74,6 +77,20 @@ while running:
             
         pause.update()
         pause.draw()
+
+    elif state == "game_over":
+        action = game_over.handle_events()
+        
+        if action == "quit":
+            running = False
+        elif action == "gameplay":
+            state = "gameplay"
+        elif action == "menu":
+            state = "menu"
+            new_game = True
+            
+        game_over.update()
+        game_over.draw()
 
     elif state == "highscores":
         action = highscores.handle_events()
