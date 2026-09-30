@@ -1,10 +1,11 @@
 import pygame
 import time
 import string
-from gamedata import GameData, Direction
-from enums_helper import Mode
-from pacman import Pacman
-from ghost import Ghost
+
+from src.gamedata import GameData, Direction
+from src.enums_helper import Mode
+from src.pacman import Pacman
+from src.ghost import Ghost
 
 
 class Adapter():
@@ -49,8 +50,10 @@ class Player:
         interp_x = prev_x + (curr_x - prev_x) * t
         interp_y = prev_y + (curr_y - prev_y) * t
 
-        pixel_x = int(70 * interp_x) + self.adpater.start_x + self.adpater.WALL_THICKNESS * 2
-        pixel_y = int(70 * interp_y) + self.adpater.start_y + self.adpater.WALL_THICKNESS * 2
+        pixel_x = (int(70 * interp_x) + self.adpater.start_x +
+                   self.adpater.WALL_THICKNESS * 2)
+        pixel_y = (int(70 * interp_y) + self.adpater.start_y +
+                   self.adpater.WALL_THICKNESS * 2)
 
         self.pexel_posstion = (pixel_x, pixel_y)
 
@@ -88,8 +91,10 @@ class Ghost_G:
         interp_x = prev_x + (curr_x - prev_x) * t
         interp_y = prev_y + (curr_y - prev_y) * t
 
-        pixel_x = int(70 * interp_x) + self.adapter.start_x + self.adapter.WALL_THICKNESS * 2
-        pixel_y = int(70 * interp_y) + self.adapter.start_y + self.adapter.WALL_THICKNESS * 2
+        pixel_x = (int(70 * interp_x) + self.adapter.start_x +
+                   self.adapter.WALL_THICKNESS * 2)
+        pixel_y = (int(70 * interp_y) + self.adapter.start_y +
+                   self.adapter.WALL_THICKNESS * 2)
 
         self.pexel_posstion = (pixel_x, pixel_y)
 
@@ -126,7 +131,8 @@ class GamePlay:
         self.ghost_red = Ghost_G(game_data.ghost_red, self.adapter)
         self.ghost_green = Ghost_G(game_data.ghost_green, self.adapter)
         self.ghost_yellow = Ghost_G(game_data.ghost_yellow, self.adapter)
-        self.ghosts = [self.ghost_blue, self.ghost_green, self.ghost_red, self.ghost_yellow]
+        self.ghosts = [self.ghost_blue, self.ghost_green, self.ghost_red,
+                       self.ghost_yellow]
 
         self.pacgums = self.game_data.regular_pacgums
         self.super_pacgums = self.game_data.super_pacgums
@@ -217,13 +223,14 @@ class GamePlay:
         self.hearts = self.pacman.lives
         if now - self.last_move_time >= 0.2:
             self.pacman.pacman_prev_position = self.pacman.current_position
-            self.pacman.current_position = self.game_data.update_position_by_direction(
+            self.pacman.current_position = self.game_data.update_pos_by_dirc(
                 self.pacman.current_position, self.pacman.requested_direction
             )
             self.last_move_time = now
 
         if now - self.last_switch >= 1:
-            self.current_title = self.title_dark if self.current_title == self.title else self.title
+            self.current_title = self.title_dark if (
+                self.current_title == self.title) else self.title
             self.time_count -= 1
             self.last_switch = now
 
@@ -254,7 +261,8 @@ class GamePlay:
                     return "game_over"
                 break
 
-        if self.game_data.pacman.mode == Mode.ATTACK and self.pacman.pacman_mode == "flee":
+        if (self.game_data.pacman.mode == Mode.ATTACK and
+                self.pacman.pacman_mode == "flee"):
             self.attack = time.monotonic()
         if now - self.attack >= 3:
             self.game_data.change_mode_player_ghosts(Mode.FLEE, Mode.ATTACK)
@@ -316,15 +324,19 @@ class GamePlay:
         pacgums = self.pacgums.pacgums_grid
         super_pacgums = self.super_pacgums.positions
         self.pacman_player = pygame.image.load(
-            f"UI/images/{self.pacman.pacman_name}{self.pacman.pacman_direction}_{self.pacman.pacman_mode}.png"
+            f"UI/images/{self.pacman.pacman_name}"
+            f"{self.pacman.pacman_direction}_"
+            f"{self.pacman.pacman_mode}.png"
         )
         ghost_yellow = pygame.image.load("UI/images/ghost_yellow.png")
         ghost_red = pygame.image.load("UI/images/ghost_red.png")
         ghost_blue = pygame.image.load("UI/images/ghost_blue.png")
         ghost_green = pygame.image.load("UI/images/ghost_green.png")
 
-        self.wall_x = pygame.Surface((self.adapter.CELL_SIZE, self.adapter.WALL_THICKNESS))
-        self.wall_y = pygame.Surface((self.adapter.WALL_THICKNESS, self.adapter.CELL_SIZE))
+        self.wall_x = pygame.Surface(
+            (self.adapter.CELL_SIZE, self.adapter.WALL_THICKNESS))
+        self.wall_y = pygame.Surface(
+            (self.adapter.WALL_THICKNESS, self.adapter.CELL_SIZE))
 
         self.wall_x.fill((255, 255, 255))
         self.wall_y.fill((255, 255, 255))
@@ -339,10 +351,14 @@ class GamePlay:
                     self.screen.blit(self.wall_x, (x, y))
                 if cell & 2:
                     if col_index == len(row) - 1:
-                        self.screen.blit(self.wall_y, (x + self.adapter.CELL_SIZE - self.adapter.WALL_THICKNESS, y))
+                        self.screen.blit(self.wall_y,
+                                         ((x + self.adapter.CELL_SIZE -
+                                           self.adapter.WALL_THICKNESS), y))
                 if cell & 4:
                     if row_index == len(maze) - 1:
-                        self.screen.blit(self.wall_x, (x, y + self.adapter.CELL_SIZE - self.adapter.WALL_THICKNESS))
+                        self.screen.blit(self.wall_x,
+                                         (x, (y + self.adapter.CELL_SIZE -
+                                              self.adapter.WALL_THICKNESS)))
                 if cell & 8:
                     self.screen.blit(self.wall_y, (x, y))
                 if pacgums[row_index][col_index]:
@@ -358,4 +374,5 @@ class GamePlay:
         self.screen.blit(ghost_red, self.ghost_red.pexel_posstion)
         self.screen.blit(ghost_blue, self.ghost_blue.pexel_posstion)
         self.screen.blit(ghost_green, self.ghost_green.pexel_posstion)
+
         pygame.display.flip()

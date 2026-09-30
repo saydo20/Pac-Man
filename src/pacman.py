@@ -1,5 +1,6 @@
 from typing import Tuple
-from enums_helper import Mode
+
+from src.enums_helper import Mode
 
 
 class Pacman:

@@ -1,7 +1,8 @@
 from typing import Tuple, List
 from collections import deque
-from enums_helper import Direction
 import random
+
+from src.enums_helper import Direction
 
 
 class MoveGhost:

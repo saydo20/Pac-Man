@@ -1,6 +1,7 @@
 from typing import Tuple
-from enums_helper import Mode, Color
-from move_ghosts import MoveGhost
+
+from src.enums_helper import Mode, Color
+from src.move_ghosts import MoveGhost
 
 
 class Ghost:

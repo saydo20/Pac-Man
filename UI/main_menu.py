@@ -75,7 +75,8 @@ class MainMenu:
     def update(self):
         now = time.monotonic()
         if now - self.last_switch >= 0.5:
-            self.current_title = self.title_dark if self.current_title == self.title else self.title
+            self.current_title = self.title_dark if (
+                self.current_title == self.title) else self.title
             self.last_switch = now
 
         if now - self.last_switch_coin >= 0.3:
@@ -109,10 +110,14 @@ class MainMenu:
 
         self.screen.blit(self.pac_man_title, (750, 650))
 
-        start = self.start_game_selected if self.selected == 0 else self.start_game
-        instr = self.instructions_selected if self.selected == 1 else self.instructions
-        high = self.view_highscores_selected if self.selected == 2 else self.view_highscores
-        exit_btn = self.exit_button_selected if self.selected == 3 else self.exit_button
+        start = self.start_game_selected if (
+            self.selected == 0) else self.start_game
+        instr = self.instructions_selected if (
+            self.selected == 1) else self.instructions
+        high = self.view_highscores_selected if (
+            self.selected == 2) else self.view_highscores
+        exit_btn = self.exit_button_selected if (
+            self.selected == 3) else self.exit_button
 
         self.screen.blit(self.arrow, (640, self.arrow_places[self.selected]))
         self.screen.blit(start, (700, 800))
@@ -122,7 +127,5 @@ class MainMenu:
 
         if self.show_coin:
             self.screen.blit(self.coin, (800, 1600))
-
-        
 
         pygame.display.flip()

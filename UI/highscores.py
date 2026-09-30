@@ -1,6 +1,6 @@
 import pygame
 import time
-from score import Score
+from src.score import Score
 import string
 
 
@@ -73,7 +73,8 @@ class Highscores:
     def update(self, score: Score):
         now = time.monotonic()
         if now - self.last_switch >= 1:
-            self.current_title = self.title_dark if self.current_title == self.title else self.title
+            self.current_title = self.title_dark if (
+                self.current_title == self.title) else self.title
             self.last_switch = now
         self.scores = score
 
@@ -100,7 +101,7 @@ class Highscores:
         self.screen.blit(self.border_inside_y3, (1820, 270))
         self.screen.blit(self.border_inside_x3, (70, 1530))
 
-        self.screen.blit(self.top_scores, ((660, 370)))
+        self.screen.blit(self.top_scores, (660, 370))
 
         self.screen.blit(self.rank, ((180, 450)))
         self.screen.blit(self.player_name, ((400, 450)))
@@ -115,5 +116,5 @@ class Highscores:
             self.draw_text(f"{score['score']}", 1650, y, 5000)
             self.screen.blit(self.line, (115, y + 60))
             y += 80
-                
+
         pygame.display.flip()

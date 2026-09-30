@@ -1,8 +1,8 @@
-from ghost import Ghost
-from pacman import Pacman
-from super_pacgums import SuperPacgum
-from regular_pacgums import RegularPacgum
-from enums_helper import Direction, Mode, Color
+from src.ghost import Ghost
+from src.pacman import Pacman
+from src.super_pacgums import SuperPacgum
+from src.regular_pacgums import RegularPacgum
+from src.enums_helper import Direction, Mode, Color
 
 from mazegenerator import MazeGenerator
 from typing import Dict, Tuple, List
@@ -176,7 +176,7 @@ class GameData:
         self.ghost_green.mode = ghost_mode
         self.ghost_blue.mode = ghost_mode
 
-    def update_position_by_direction(self, current_position: Tuple,
+    def update_pos_by_dirc(self, current_position: Tuple,
                                      direction: Direction) -> Tuple:
         x, y = current_position
         grid_maze = self.grid
