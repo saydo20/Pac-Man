@@ -58,7 +58,6 @@ class Player:
         self.pexel_posstion = (pixel_x, pixel_y)
 
     def reset_to_spawn(self):
-        """Resets grid positions and forces pixel position calculation."""
         self.pacman.start_position()
         self.current_position = self.pacman.current_position
         self.pacman_prev_position = self.current_position
@@ -74,6 +73,17 @@ class Ghost_G:
         self.mode = ghost.mode
         self.pexel_posstion = (0, 0)
         self.last_step_time = time.monotonic()
+        self.time_of_death = 0.0
+        self.is_dead = False
+
+    def die(self, now: float):
+        self.is_dead = True
+        self.time_of_death = now
+        self.reset_to_spawn()
+
+    def update_death_state(self, now: float):
+        if self.is_dead and (now - self.time_of_death >= 2):
+            self.is_dead = False
 
     def step_ghost(self, pacman_position: tuple):
         self.prev_position = self.current_position
@@ -99,7 +109,6 @@ class Ghost_G:
         self.pexel_posstion = (pixel_x, pixel_y)
 
     def reset_to_spawn(self):
-        """Resets grid positions and forces pixel position calculation."""
         self.ghost.set_start_position()
         self.current_position = self.ghost.current_position
         self.prev_position = self.current_position
@@ -204,7 +213,10 @@ class GamePlay:
         return None
 
     def update(self):
+        self.pacman.score = self.pacman.pacman.score
         now = time.monotonic()
+        for ghost in self.ghosts:
+            ghost.update_death_state(now)
         if self.player_death:
             if now - self.time_of_death < 2.0:
                 return
@@ -248,24 +260,29 @@ class GamePlay:
         x_player, y_player = self.pacman.pexel_posstion
         for ghost in self.ghosts:
             x_ghost, y_ghost = ghost.pexel_posstion
-            if (x_ghost - x_player)**2 + (y_ghost - y_player)**2 < 30**2:
-                self.time_of_death = now
-                self.player_death = True
-                self.pacman.lives -= 1
-                self.pacman.pacman.lives -= 1
-                self.hearts = self.pacman.lives
-                self.pacman.reset_to_spawn()
-                for g in self.ghosts:
-                    g.reset_to_spawn()
-                if self.pacman.lives == 0:
-                    return "game_over"
-                break
+            if (x_ghost - x_player)**2 + (y_ghost - y_player)**2 <= 10**2:
+                if self.pacman.mode == Mode.FLEE:
+                    self.time_of_death = now
+                    self.player_death = True
+                    self.pacman.lives -= 1
+                    self.pacman.pacman.lives -= 1
+                    self.hearts = self.pacman.lives
+                    self.pacman.reset_to_spawn()
+                    for g in self.ghosts:
+                        g.reset_to_spawn()
+                    if self.pacman.lives == 0:
+                        return "game_over"
+                    break
+                elif self.pacman.mode == Mode.ATTACK:
+                    if not ghost.is_dead:
+                        ghost.die(now)
 
         if (self.game_data.pacman.mode == Mode.ATTACK and
                 self.pacman.pacman_mode == "flee"):
             self.attack = time.monotonic()
-        if now - self.attack >= 3:
+        if now - self.attack >= 200:
             self.game_data.change_mode_player_ghosts(Mode.FLEE, Mode.ATTACK)
+        self.pacman.mode = self.game_data.pacman.mode
         self.pacman.pacman_mode = self.game_data.pacman.mode.name.lower()
 
     def draw_text(self, text: str, x, y, max_size):
@@ -332,6 +349,7 @@ class GamePlay:
         ghost_red = pygame.image.load("UI/images/ghost_red.png")
         ghost_blue = pygame.image.load("UI/images/ghost_blue.png")
         ghost_green = pygame.image.load("UI/images/ghost_green.png")
+        ghost_dead = pygame.image.load("UI/images/ghost_dead.png")
 
         self.wall_x = pygame.Surface(
             (self.adapter.CELL_SIZE, self.adapter.WALL_THICKNESS))
@@ -370,9 +388,14 @@ class GamePlay:
             y += self.adapter.CELL_SIZE
 
         self.screen.blit(self.pacman_player, self.pacman.pexel_posstion)
-        self.screen.blit(ghost_yellow, self.ghost_yellow.pexel_posstion)
-        self.screen.blit(ghost_red, self.ghost_red.pexel_posstion)
-        self.screen.blit(ghost_blue, self.ghost_blue.pexel_posstion)
-        self.screen.blit(ghost_green, self.ghost_green.pexel_posstion)
+        yellow = ghost_dead if self.ghost_yellow.is_dead else ghost_yellow
+        red = ghost_dead if self.ghost_red.is_dead else ghost_red
+        blue = ghost_dead if self.ghost_blue.is_dead else ghost_blue
+        green = ghost_dead if self.ghost_green.is_dead else ghost_green
+
+        self.screen.blit(yellow, self.ghost_yellow.pexel_posstion)
+        self.screen.blit(red, self.ghost_red.pexel_posstion)
+        self.screen.blit(blue, self.ghost_blue.pexel_posstion)
+        self.screen.blit(green, self.ghost_green.pexel_posstion)
 
         pygame.display.flip()
