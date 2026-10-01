@@ -16,4 +16,37 @@ class Config:
             valid_config += ln
         config: Dict = json.loads(valid_config)
 
+        defaul_config = {}
+        defaul_config['highscore_filename'] = "scores.json"
+        defaul_config['lives'] = 3
+        defaul_config['points_per_pacgum'] = 10
+        defaul_config['points_per_super_pacgum'] = 50
+        defaul_config['points_per_ghost'] = 200
+        defaul_config['level_max_time'] = 90
+
+        try:
+            for k, v in config.items():
+                if k == 'highscore_filename':
+                    if ".json" not in v:
+                        config[k] = defaul_config[k]
+                    continue
+                v = int(v)
+                if k == "lives":
+                    if v <= 0 or v > 5:
+                        config[k] = defaul_config[k]
+                elif k == 'points_per_pacgum':
+                    if v <= 0 or v > 100:
+                        config[k] = defaul_config[k]
+                elif k == 'points_per_super_pacgum':
+                    if v <= 0 or v > 500:
+                        config[k] = defaul_config[k]
+                elif k == 'points_per_ghost':
+                    if v <= 0 or v > 1000:
+                        config[k] = defaul_config[k]
+                elif k == 'level_max_time':
+                    if v < 90 or v > 9999:
+                        config[k] = defaul_config[k]
+        except Exception:
+            return defaul_config
+
         return config
