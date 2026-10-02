@@ -20,6 +20,8 @@ class GameData:
         self.grid = self.maze.maze
 
         self.nb_level = 1
+        self.__original_time = config.get('level_max_time', 90)
+        self.time_count = self.__original_time
 
         # initialize the 4 ghosts
         self.__set_the_ghosts()
@@ -146,9 +148,11 @@ class GameData:
         self.__pacman.mode = Mode.FLEE
 
         # initialize super pacgums
-        self.__super_pacgums.positions.clear()
-        self.__super_pacgums.positions.extend(
-            self.__super_pacgums.original_positions)
+        temp_super = SuperPacgum(self.size_maze)
+        old_super_positions = self.__super_pacgums.positions
+        old_super_positions.clear()
+        old_super_positions.extend(temp_super.positions)
+        self.__super_pacgums.positions = old_super_positions
 
         self.__ghost_blue.set_start_position()
         self.__ghost_blue.previous_position = self.ghost_blue.current_position
@@ -169,6 +173,7 @@ class GameData:
         self.__ghost_red.mode = Mode.ATTACK
 
         self.nb_level += 1
+        self.time_count = self.__original_time
         old_pacgums_grid = self.__regular_pacgums.pacgums_grid
         self.__regular_pacgums = RegularPacgum(
             self.config, self.__pacman.current_position,

@@ -36,20 +36,19 @@ class RegularPacgum:
                 return True
         return False
 
-    def __get_available_coords(self, grid: List[List]) -> List[Tuple[int, int]]:
+    def __get_available_coords(self, grid: List[List]) -> List[Tuple]:
         available_cells = []
 
         for y in range(len(grid)):
             for x in range(len(grid[y])):
-                # Your logic stays exactly the same to filter out bad spots
+
                 if grid[y][x] == 15:
-                    pass # We already filled pacgums_grid with 0s in __init__
+                    pass
                 elif (x, y) == self.__pacman_position:
                     pass
                 elif self.__is_position_has_superpacgums(y, x):
                     pass
                 else:
-                    # Save the valid coordinate instead of setting it to 1 immediately
                     available_cells.append((y, x))
 
         return available_cells

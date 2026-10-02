@@ -6,7 +6,6 @@ class SuperPacgum:
         self.__super_pacgum_score: int = 0
         self.__size_maze = size_maze
         self.positions: List[Tuple] = self.get_super_pacgums_positions()
-        self.original_positions: List[Tuple] = self.positions
 
     def set_super_pacgum_score(self, super_pacgum_score: int) -> None:
         self.__super_pacgum_score = super_pacgum_score
