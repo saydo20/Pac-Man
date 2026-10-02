@@ -1,3 +1,4 @@
+import random
 from typing import List, Dict, Tuple
 
 
@@ -6,22 +7,28 @@ class RegularPacgum:
     def __init__(self, config: Dict,
                  pacman_position: Tuple,
                  super_pacgums_position: List[Tuple],
-                 grid: List[List]) -> None:
+                 grid: List[List], nb_level: int) -> None:
 
-        # get the position of super_pacgums, pacman
         self.__pacman_position = pacman_position
         self.__super_pacgums_position = super_pacgums_position
-
         self.__grid = grid
 
-        # initialize empty list to hold positions of pacgums
         self.pacgums_grid: List[List] = [[0 for _ in row] for
                                          row in self.__grid]
 
-        # get data from config file, and get the available cells for dots
         self.score_pacgum = config.get('points_per_pacgum', 10)
-        self.nb_available_cells = self.__get_nb_available_cells(self.__grid)
-        self.nb_pacgums = self.nb_available_cells
+
+        self.available_coords = self.__get_available_coords(self.__grid)
+
+        self.nb_available_cells = len(self.available_coords)
+
+        calculated_pacgums = (self.nb_available_cells * (nb_level + 8)) // 18
+        self.nb_pacgums = min(calculated_pacgums, self.nb_available_cells)
+
+        chosen_cells = random.sample(self.available_coords, self.nb_pacgums)
+
+        for y, x in chosen_cells:
+            self.pacgums_grid[y][x] = 1
 
     def __is_position_has_superpacgums(self, y: int, x: int) -> bool:
         for ps in self.__super_pacgums_position:
@@ -29,19 +36,20 @@ class RegularPacgum:
                 return True
         return False
 
-    def __get_nb_available_cells(self, grid: List[List]) -> int:
-        nb_available_cells = 0
+    def __get_available_coords(self, grid: List[List]) -> List[Tuple[int, int]]:
+        available_cells = []
 
         for y in range(len(grid)):
             for x in range(len(grid[y])):
+                # Your logic stays exactly the same to filter out bad spots
                 if grid[y][x] == 15:
-                    self.pacgums_grid[y][x] = 0
+                    pass # We already filled pacgums_grid with 0s in __init__
                 elif (x, y) == self.__pacman_position:
-                    self.pacgums_grid[y][x] = 0
+                    pass
                 elif self.__is_position_has_superpacgums(y, x):
-                    self.pacgums_grid[y][x] = 0
+                    pass
                 else:
-                    self.pacgums_grid[y][x] = 1
-                    nb_available_cells += 1
+                    # Save the valid coordinate instead of setting it to 1 immediately
+                    available_cells.append((y, x))
 
-        return nb_available_cells
+        return available_cells

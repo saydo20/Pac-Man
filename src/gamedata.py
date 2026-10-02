@@ -19,6 +19,8 @@ class GameData:
                                   (0, 0), (-1, -1), 42)
         self.grid = self.maze.maze
 
+        self.nb_level = 1
+
         # initialize the 4 ghosts
         self.__set_the_ghosts()
         self.score_per_ghost = config.get('points_per_ghost', 200)
@@ -36,7 +38,8 @@ class GameData:
 
         self.__regular_pacgums = RegularPacgum(
             config, self.__pacman.current_position,
-            self.__super_pacgums.positions, self.grid)
+            self.__super_pacgums.positions, self.grid,
+            self.nb_level)
 
     @property
     def ghost_red(self) -> Ghost:
@@ -135,13 +138,17 @@ class GameData:
         # set the maze
         self.maze = MazeGenerator(self.size_maze, False,
                                   (0, 0), (-1, -1), 0)
-        self.grid = self.maze.maze
+
+        self.grid.clear()
+        self.grid.extend(self.maze.maze)
 
         self.__pacman.start_position()
         self.__pacman.mode = Mode.FLEE
 
         # initialize super pacgums
-        self.__super_pacgums.get_super_pacgums_positions()
+        self.__super_pacgums.positions.clear()
+        self.__super_pacgums.positions.extend(
+            self.__super_pacgums.original_positions)
 
         self.__ghost_blue.set_start_position()
         self.__ghost_blue.previous_position = self.ghost_blue.current_position
@@ -161,9 +168,16 @@ class GameData:
         self.__ghost_red.previous_position = self.__ghost_red.current_position
         self.__ghost_red.mode = Mode.ATTACK
 
+        self.nb_level += 1
+        old_pacgums_grid = self.__regular_pacgums.pacgums_grid
         self.__regular_pacgums = RegularPacgum(
             self.config, self.__pacman.current_position,
-            self.__super_pacgums.positions, self.grid)
+            self.__super_pacgums.positions, self.grid,
+            self.nb_level)
+
+        old_pacgums_grid.clear()
+        old_pacgums_grid.extend(self.__regular_pacgums.pacgums_grid)
+        self.__regular_pacgums.pacgums_grid = old_pacgums_grid
 
     def change_mode_player_ghosts(self, pacman_mode: Mode,
                                   ghost_mode: Mode) -> None:
@@ -177,7 +191,7 @@ class GameData:
         self.ghost_blue.mode = ghost_mode
 
     def update_pos_by_dirc(self, current_position: Tuple,
-                                     direction: Direction) -> Tuple:
+                           direction: Direction) -> Tuple:
         x, y = current_position
         grid_maze = self.grid
         grid_pacgums = self.regular_pacgums.pacgums_grid
