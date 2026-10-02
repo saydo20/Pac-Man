@@ -42,7 +42,7 @@ while running:
             menu = MainMenu(screen)
             game_data = GameData(config)
             pause = Pause(screen)
-            game_over = GameOver(screen)
+            game_over = GameOver(screen, game_data)
             game_play = GamePlay(screen, game_data)
             new_game = False
 
@@ -94,11 +94,12 @@ while running:
 
         if action == "quit":
             running = False
-        elif action == "gameplay":
-            state = "gameplay"
-        elif action == "menu":
-            state = "menu"
-            new_game = True
+        else:
+            if action is not None:
+                name, player_score = action
+                score.save_score(name, player_score)
+                new_game = True
+                state = "menu"
 
         game_over.update()
         game_over.draw()

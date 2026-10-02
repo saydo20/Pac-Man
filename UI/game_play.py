@@ -148,8 +148,8 @@ class GamePlay:
 
         self.score = self.pacman.pacman.score
         self.hearts = self.pacman.pacman.lives
-        self.level_count = 2
-        self.time_count = 90
+        self.level_count = 1
+        self.time_count = 900
 
         self.border_x.fill((0, 0, 128))
         self.border_y.fill((0, 0, 128))
@@ -276,6 +276,8 @@ class GamePlay:
                 elif self.pacman.mode == Mode.ATTACK:
                     if not ghost.is_dead:
                         ghost.die(now)
+        if all(value == 0 for row in self.pacgums.pacgums_grid for value in row):
+            self.game_data.generate_next_level()
 
         if (self.game_data.pacman.mode == Mode.ATTACK and
                 self.pacman.pacman_mode == "flee"):

@@ -112,7 +112,7 @@ class Highscores:
         y = 500
         for score in self.scores:
             self.draw_text(f"{score['rank']}", 200, y, 5000)
-            self.draw_text(f"{score['first_3_chars']}", 400, y, 5000)
+            self.draw_text(f"{score['Player']}", 400, y, 5000)
             self.draw_text(f"{score['score']}", 1650, y, 5000)
             self.screen.blit(self.line, (115, y + 60))
             y += 80
