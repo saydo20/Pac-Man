@@ -148,8 +148,6 @@ class GamePlay:
 
         self.score = self.pacman.pacman.score
         self.hearts = self.pacman.pacman.lives
-        self.level_count = 1
-        self.time_count = 900
 
         self.border_x.fill((0, 0, 128))
         self.border_y.fill((0, 0, 128))
@@ -243,7 +241,7 @@ class GamePlay:
         if now - self.last_switch >= 1:
             self.current_title = self.title_dark if (
                 self.current_title == self.title) else self.title
-            self.time_count -= 1
+            self.game_data.time_count -= 1
             self.last_switch = now
 
         if now - self.last_switch_pacman >= 0.5:
@@ -276,7 +274,8 @@ class GamePlay:
                 elif self.pacman.mode == Mode.ATTACK:
                     if not ghost.is_dead:
                         ghost.die(now)
-        if all(value == 0 for row in self.pacgums.pacgums_grid for value in row):
+        if all(value == 0 for row in self.pacgums.pacgums_grid
+               for value in row):
             self.game_data.generate_next_level()
 
         if (self.game_data.pacman.mode == Mode.ATTACK and
@@ -336,12 +335,11 @@ class GamePlay:
         for i in range(self.hearts):
             self.screen.blit(self.heart, (x, 350))
             x += 60
-        self.draw_text(f"{self.level_count:02d}", 1140, 350, 1400)
-        self.draw_text(f"{self.time_count}", 1530, 350, 1800)
+        self.draw_text(f"{self.game_data.nb_level:02d}", 1140, 350, 1400)
+        self.draw_text(f"{self.game_data.time_count}", 1530, 350, 1800)
 
         maze = self.maze.maze
         pacgums = self.pacgums.pacgums_grid
-        super_pacgums = self.super_pacgums.positions
         self.pacman_player = pygame.image.load(
             f"UI/images/{self.pacman.pacman_name}"
             f"{self.pacman.pacman_direction}_"
@@ -383,7 +381,7 @@ class GamePlay:
                     self.screen.blit(self.wall_y, (x, y))
                 if pacgums[row_index][col_index]:
                     self.screen.blit(self.pacgum, (x + 30, y + 30))
-                if (col_index, row_index) in super_pacgums:
+                if (col_index, row_index) in self.super_pacgums.positions:
                     self.screen.blit(self.super_pacgum, (x + 17, y + 17))
                 x += self.adapter.CELL_SIZE
             x = self.adapter.start_x
