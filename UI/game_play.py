@@ -274,6 +274,7 @@ class GamePlay:
                 elif self.pacman.mode == Mode.ATTACK:
                     if not ghost.is_dead:
                         ghost.die(now)
+
         if all(value == 0 for row in self.pacgums.pacgums_grid
                for value in row):
             self.game_data.generate_next_level()
@@ -301,6 +302,10 @@ class GamePlay:
             x += 32
 
     def draw(self):
+        if self.pacman.mode == Mode.WIN:
+            print('congratulation')       ##########################################################################################################################
+            exit()
+
         self.screen.fill((0, 0, 0))
         self.screen.blit(self.border_x, (0, 0))
         self.screen.blit(self.border_y, (1890, 0))
@@ -340,6 +345,7 @@ class GamePlay:
 
         maze = self.maze.maze
         pacgums = self.pacgums.pacgums_grid
+
         self.pacman_player = pygame.image.load(
             f"UI/images/{self.pacman.pacman_name}"
             f"{self.pacman.pacman_direction}_"
