@@ -190,7 +190,7 @@ class GamePlay:
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_p:
                     return "pause"
-                if event.key == pygame.K_q:
+                if event.key == pygame.K_ESCAPE:
                     return "menu"
                 if not self.player_death:
                     if event.key == pygame.K_DOWN:

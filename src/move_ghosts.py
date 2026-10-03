@@ -6,6 +6,8 @@ from src.enums_helper import Direction
 
 
 class MoveGhost:
+    directions = [(0, -1), (0, 1), (-1, 0), (1, 0)]
+
     @staticmethod
     def __is_wall_not_exist(current_position: Tuple,
                             dx: int, dy: int,
@@ -39,14 +41,13 @@ class MoveGhost:
     def ghosts_run_away(grid: List[List], start_position: Tuple,
                         previous_position: Tuple,
                         pacman_position: Tuple) -> Tuple:
-        directions = [(0, -1), (0, 1), (-1, 0), (1, 0)]
         valid_moves = []
         x, y = start_position
         max_y = len(grid)
         max_x = len(grid[0])
         px, py = pacman_position
 
-        for dx, dy in directions:
+        for dx, dy in MoveGhost.directions:
             next_x, next_y = dx + x, dy + y
             neighbor = (next_x, next_y)
 
@@ -73,13 +74,12 @@ class MoveGhost:
     @staticmethod
     def move_ghost_random(grid: List[List], start_position: Tuple,
                           previous_position: Tuple) -> Tuple:
-        directions = [(0, -1), (0, 1), (-1, 0), (1, 0)]
         valid_moves = []
         x, y = start_position
         max_y = len(grid)
         max_x = len(grid[0])
 
-        for dx, dy in directions:
+        for dx, dy in MoveGhost.directions:
             next_x, next_y = dx + x, dy + y
             neighbor = (next_x, next_y)
 
@@ -98,7 +98,6 @@ class MoveGhost:
     @staticmethod
     def Move_ghost_with_bfs(grid: List[List], start_position: Tuple,
                             target_position: Tuple) -> Tuple:
-        directions = [(0, -1), (0, 1), (-1, 0), (1, 0)]
         queue = deque([start_position])
         visited = set()
         parents = {}
@@ -123,7 +122,7 @@ class MoveGhost:
                 else:
                     return start_position
 
-            for dx, dy in directions:
+            for dx, dy in MoveGhost.directions:
                 next_x, next_y = dx + x, dy + y
                 neighbor = (next_x, next_y)
 

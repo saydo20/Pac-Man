@@ -67,7 +67,7 @@ class Highscores:
             if event.type == pygame.QUIT:
                 return "quit"
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_q:
+                if event.key == pygame.K_ESCAPE:
                     return "menu"
 
     def update(self, score: Score):

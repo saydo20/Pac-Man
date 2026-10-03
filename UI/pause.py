@@ -55,7 +55,7 @@ class Pause:
             if event.type == pygame.QUIT:
                 return "quit"
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_q:
+                if event.key == pygame.K_ESCAPE:
                     return "gameplay"
                 if event.key == pygame.K_UP:
                     self.selected = (self.selected - 1) % 2
