@@ -19,7 +19,7 @@ class GameData:
                                   (0, 0), (-1, -1), 42)
         self.grid = self.maze.maze
 
-        self.nb_level = 1
+        self.nb_level = 1                 ##################################################################################################
         self.__original_time = config.get('level_max_time', 90)
         self.time_count = self.__original_time
 
@@ -137,6 +137,12 @@ class GameData:
             self.pacman.score += self.score_per_pacgum
 
     def generate_next_level(self) -> None:
+
+        self.nb_level += 1
+        if self.nb_level > 10:
+            self.pacman.mode = Mode.WIN
+            return
+
         # set the maze
         self.maze = MazeGenerator(self.size_maze, False,
                                   (0, 0), (-1, -1), 0)
@@ -172,7 +178,6 @@ class GameData:
         self.__ghost_red.previous_position = self.__ghost_red.current_position
         self.__ghost_red.mode = Mode.ATTACK
 
-        self.nb_level += 1
         self.time_count = self.__original_time
         old_pacgums_grid = self.__regular_pacgums.pacgums_grid
         self.__regular_pacgums = RegularPacgum(

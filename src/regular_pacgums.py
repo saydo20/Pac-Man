@@ -22,7 +22,8 @@ class RegularPacgum:
 
         self.nb_available_cells = len(self.available_coords)
 
-        calculated_pacgums = (self.nb_available_cells * (nb_level + 8)) // 18
+        # calculated_pacgums = (self.nb_available_cells * (nb_level + 2)) // 12
+        calculated_pacgums = 1           ##################################################################################################################################
         self.nb_pacgums = min(calculated_pacgums, self.nb_available_cells)
 
         chosen_cells = random.sample(self.available_coords, self.nb_pacgums)
