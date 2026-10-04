@@ -4,7 +4,7 @@ import string
 from src.gamedata import GameData
 
 
-class GameOver:
+class GameWin:
     def __init__(self, screen: pygame.Surface, game_data: GameData):
         self.screen = screen
         self.game_data = game_data
@@ -29,14 +29,16 @@ class GameOver:
         self.resume_hover = pygame.image.load("UI/images/resume_hover.png")
         self.return_normal = pygame.image.load("UI/images/return_normal.png")
         self.return_hover = pygame.image.load("UI/images/return_hover.png")
-        self.game_over = pygame.image.load("UI/images/game_over.png")
         self.final_score = pygame.image.load("UI/images/final_score.png")
+        self.you_win_normal = pygame.image.load("UI/images/you_win_normal.png")
+        self.you_win_changed = pygame.image.load("UI/images/you_win_changed.png")
         self.enter_name = pygame.image.load("UI/images/enter_name.png")
         self.current_title = self.title
         self.paused_show = True
         self.current_resume = self.resume_normal
         self.current_return = self.return_normal
         self.selected = 0
+        self.you_win = self.you_win_normal
 
         blue_color = (9, 9, 232)
         for surface in [self.border_inside_x, self.border_inside_y,
@@ -70,13 +72,13 @@ class GameOver:
             self.current_title = self.title_dark if self.current_title == self.title else self.title
             self.last_switch = now
         if now - self.last_switch_pasue >= 0.3:
-            self.paused_show = not self.paused_show
+            self.you_win = self.you_win_changed if self.you_win == self.you_win_normal else self.you_win_normal
             self.last_switch_pasue = now
 
     def draw_text(self, text: str, x, y, max_size):
         for char in text:
             if char == " ":
-                x += 10
+                x += 15
                 continue
             if x >= max_size - 32:
                 self.screen.blit(self.images["."], (x, y))
@@ -110,7 +112,7 @@ class GameOver:
         self.screen.blit(self.border_inside_y3, (1820, 270))
         self.screen.blit(self.border_inside_x3, (70, 1530))
 
-        self.screen.blit(self.game_over, (620, 600))
+        self.screen.blit(self.you_win, (700, 580))
         self.screen.blit(self.final_score, (780, 720))
 
         self.draw_text(f"{self.game_data.pacman.score}", 850, 800, 1000)

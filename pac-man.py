@@ -6,6 +6,7 @@ from UI.game_play import GamePlay
 from UI.pause import Pause
 from UI.highscores import Highscores
 from UI.game_over import GameOver
+from UI.win import GameWin
 from UI.instructions import Instructions
 from src.score import Score
 from src.gamedata import GameData
@@ -43,6 +44,7 @@ while running:
             game_data = GameData(config)
             pause = Pause(screen)
             game_over = GameOver(screen, game_data)
+            game_win =  GameWin(screen, game_data)
             game_play = GamePlay(screen, game_data)
             new_game = False
 
@@ -73,6 +75,8 @@ while running:
 
         if game_play.update() == "game_over":
             state = "game_over"
+        if game_play.update() == "game_win":
+            state = "game_win"
         game_play.draw()
 
     elif state == "pause":
@@ -103,6 +107,20 @@ while running:
 
         game_over.update()
         game_over.draw()
+    elif state == "game_win":
+        action = game_win.handle_events()
+
+        if action == "quit":
+            running = False
+        else:
+            if action is not None:
+                name, player_score = action
+                score.save_score(name, player_score)
+                new_game = True
+                state = "menu"
+
+        game_win.update()
+        game_win.draw()
 
     elif state == "highscores":
         action = highscores.handle_events()

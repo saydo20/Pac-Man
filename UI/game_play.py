@@ -296,9 +296,12 @@ class GamePlay:
 
         if all(value == 0 for row in self.pacgums.pacgums_grid
                for value in row):
-            self.game_data.generate_next_level()
-            self.pacman.current_position = self.pacman.pacman.current_position
-            self.pacman.requested_direction = Direction.RIGHT
+            if self.game_data.nb_level == 10:
+                return "game_win"
+            else:
+                self.game_data.generate_next_level()
+                self.pacman.current_position = self.pacman.pacman.current_position
+                self.pacman.requested_direction = Direction.RIGHT
 
         if (self.game_data.pacman.mode == Mode.ATTACK and
                 self.pacman.pacman_mode == "flee"):

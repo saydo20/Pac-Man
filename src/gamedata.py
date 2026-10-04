@@ -19,7 +19,7 @@ class GameData:
                                   (0, 0), (-1, -1), 42)
         self.grid = self.maze.maze
 
-        self.nb_level = 10                 ##################################################################################################
+        self.nb_level = 1
         self.__original_time = config.get('level_max_time', 90)
         self.time_count = self.__original_time
 
