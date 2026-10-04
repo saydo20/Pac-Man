@@ -39,6 +39,7 @@ class Player:
         self.pexel_posstion = (0, 0)
         self.mode = pacman.mode
         self.mouth_closed = False
+        self.infinite_lives = False
 
     def move_player(self, last_move_time):
         now = time.monotonic()
@@ -75,6 +76,7 @@ class Ghost_G:
         self.last_step_time = time.monotonic()
         self.time_of_death = 0.0
         self.is_dead = False
+        self.freeze = False
 
     def die(self, now: float):
         self.is_dead = True
@@ -132,6 +134,7 @@ class GamePlay:
         self.for_two = pygame.Surface((70, 70))
         self.pacgum = pygame.Surface((10, 10))
         self.super_pacgum = pygame.Surface((15, 15))
+        self.cheat_mode = False
 
         self.game_data = game_data
         self.maze = self.game_data.maze
@@ -185,13 +188,28 @@ class GamePlay:
 
     def handle_events(self):
         for event in pygame.event.get():
-            if event.type == pygame.QUIT:
+            if event.type == pygame.K_ESCAPE:
                 return "quit"
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_p:
                     return "pause"
                 if event.key == pygame.K_ESCAPE:
                     return "menu"
+                if event.key == pygame.K_c:
+                    self.cheat_mode = not self.cheat_mode
+                    print("cheat mode activated" if self.cheat_mode else "deactivate cheat mode")
+                if self.cheat_mode:
+                    if event.key == pygame.K_n:
+                        self.game_data.generate_next_level()
+                        self.pacman.current_position = self.pacman.pacman.current_position
+                        self.pacman.requested_direction = Direction.RIGHT
+                    if event.key == pygame.K_g:
+                        for ghost in self.ghosts:
+                            ghost.freeze = not ghost.freeze
+                        print("ghost freezed" if self.ghost_blue.freeze else "ghost move")
+                    if event.key == pygame.K_l:
+                        self.pacman.infinite_lives = not self.pacman.infinite_lives
+                        print("inifinte lives" if self.pacman.infinite_lives else "normal lives")
                 if not self.player_death:
                     if event.key == pygame.K_DOWN:
                         self.pacman.requested_direction = Direction.DOWN
@@ -252,14 +270,15 @@ class GamePlay:
                 self.pacman.pacman_name = "pacman_closed"
                 self.pacman.mouth_closed = True
             for ghost in self.ghosts:
-                ghost.step_ghost(self.pacman.current_position)
+                if not ghost.freeze:
+                    ghost.step_ghost(self.pacman.current_position)
             self.last_switch_pacman = now
 
         x_player, y_player = self.pacman.pexel_posstion
         for ghost in self.ghosts:
             x_ghost, y_ghost = ghost.pexel_posstion
             if (x_ghost - x_player)**2 + (y_ghost - y_player)**2 <= 10**2:
-                if self.pacman.mode == Mode.FLEE:
+                if self.pacman.mode == Mode.FLEE and not self.pacman.infinite_lives:
                     self.time_of_death = now
                     self.player_death = True
                     self.pacman.lives -= 1
@@ -278,11 +297,13 @@ class GamePlay:
         if all(value == 0 for row in self.pacgums.pacgums_grid
                for value in row):
             self.game_data.generate_next_level()
+            self.pacman.current_position = self.pacman.pacman.current_position
+            self.pacman.requested_direction = Direction.RIGHT
 
         if (self.game_data.pacman.mode == Mode.ATTACK and
                 self.pacman.pacman_mode == "flee"):
             self.attack = time.monotonic()
-        if now - self.attack >= 200:
+        if now - self.attack >= 8:
             self.game_data.change_mode_player_ghosts(Mode.FLEE, Mode.ATTACK)
         self.pacman.mode = self.game_data.pacman.mode
         self.pacman.pacman_mode = self.game_data.pacman.mode.name.lower()

@@ -56,8 +56,6 @@ class GameOver:
 
     def handle_events(self):
         for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                return "quit"
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_BACKSPACE and len(self.player_name) >= 0:
                     self.player_name = self.player_name[:-1]
