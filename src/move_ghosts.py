@@ -22,19 +22,9 @@ class MoveGhost:
         elif (dx, dy) == (1, 0):
             direction = Direction.RIGHT
 
-        match direction:
-            case Direction.UP:
-                if grid[y][x] & Direction.UP.value > 0:
-                    return False
-            case Direction.RIGHT:
-                if grid[y][x] & Direction.RIGHT.value > 0:
-                    return False
-            case Direction.DOWN:
-                if grid[y][x] & Direction.DOWN.value > 0:
-                    return False
-            case Direction.LEFT:
-                if grid[y][x] & Direction.LEFT.value > 0:
-                    return False
+        if grid[y][x] & direction.value > 0:
+            return False
+
         return True
 
     @staticmethod

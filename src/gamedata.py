@@ -106,19 +106,9 @@ class GameData:
                    grid: List[List]) -> bool:
         x, y = current_position
 
-        match direction:
-            case Direction.UP:
-                if grid[y][x] & Direction.UP.value > 0:
-                    return False
-            case Direction.RIGHT:
-                if grid[y][x] & Direction.RIGHT.value > 0:
-                    return False
-            case Direction.DOWN:
-                if grid[y][x] & Direction.DOWN.value > 0:
-                    return False
-            case Direction.LEFT:
-                if grid[y][x] & Direction.LEFT.value > 0:
-                    return False
+        if direction.value & grid[y][x] > 0:
+            return False
+
         return True
 
     def __add_score_to_pacman(self, current_position: Tuple,
