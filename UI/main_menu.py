@@ -56,6 +56,8 @@ class MainMenu:
         for event in pygame.event.get():
             if event.type == pygame.K_ESCAPE:
                 return "quit"
+            if event.type == pygame.QUIT:
+                return "quit"
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_UP:
                     self.selected = (self.selected - 1) % 4

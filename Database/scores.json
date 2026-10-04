@@ -37,20 +37,26 @@
     },
     {
         "Player": "Q",
-        "score": 60,
+        "score": 100,
         "rank": 7,
         "first_3_chars": "Q"
     },
     {
         "Player": "Q",
-        "score": 50,
+        "score": 60,
         "rank": 8,
         "first_3_chars": "Q"
     },
     {
         "Player": "Q",
-        "score": 20,
+        "score": 50,
         "rank": 9,
         "first_3_chars": "Q"
+    },
+    {
+        "Player": "SSSS",
+        "score": 50,
+        "rank": 10,
+        "first_3_chars": "SSS"
     }
 ]
