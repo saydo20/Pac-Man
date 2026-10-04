@@ -185,7 +185,7 @@ class GamePlay:
 
     def handle_events(self):
         for event in pygame.event.get():
-            if event.type == pygame.QUIT:
+            if event.type == pygame.K_ESCAPE:
                 return "quit"
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_p:
@@ -278,11 +278,13 @@ class GamePlay:
         if all(value == 0 for row in self.pacgums.pacgums_grid
                for value in row):
             self.game_data.generate_next_level()
+            self.pacman.current_position = self.pacman.pacman.current_position
+            self.pacman.requested_direction = Direction.RIGHT
 
         if (self.game_data.pacman.mode == Mode.ATTACK and
                 self.pacman.pacman_mode == "flee"):
             self.attack = time.monotonic()
-        if now - self.attack >= 200:
+        if now - self.attack >= 8:
             self.game_data.change_mode_player_ghosts(Mode.FLEE, Mode.ATTACK)
         self.pacman.mode = self.game_data.pacman.mode
         self.pacman.pacman_mode = self.game_data.pacman.mode.name.lower()
