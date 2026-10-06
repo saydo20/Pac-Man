@@ -188,7 +188,7 @@ class GamePlay:
 
     def handle_events(self):
         for event in pygame.event.get():
-            if event.type == pygame.K_ESCAPE:
+            if event.type == pygame.QUIT:
                 return "quit"
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_p:
@@ -310,6 +310,8 @@ class GamePlay:
             self.game_data.change_mode_player_ghosts(Mode.FLEE, Mode.ATTACK)
         self.pacman.mode = self.game_data.pacman.mode
         self.pacman.pacman_mode = self.game_data.pacman.mode.name.lower()
+        if self.pacman.pacman.mode == Mode.WIN:
+            return "game_win"
 
     def draw_text(self, text: str, x, y, max_size):
         for char in text:
@@ -326,10 +328,6 @@ class GamePlay:
             x += 32
 
     def draw(self):
-        if self.pacman.mode == Mode.WIN:
-            print('congratulation')       ##########################################################################################################################
-            exit()
-
         self.screen.fill((0, 0, 0))
         self.screen.blit(self.border_x, (0, 0))
         self.screen.blit(self.border_y, (1890, 0))

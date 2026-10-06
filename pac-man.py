@@ -44,7 +44,11 @@ while running:
             game_data = GameData(config)
             pause = Pause(screen)
             game_over = GameOver(screen, game_data)
+<<<<<<< HEAD
             game_win =  GameWin(screen, game_data)
+=======
+            game_win = GameWin(screen, game_data)
+>>>>>>> saad
             game_play = GamePlay(screen, game_data)
             new_game = False
 
@@ -75,8 +79,15 @@ while running:
 
         if game_play.update() == "game_over":
             state = "game_over"
+<<<<<<< HEAD
         if game_play.update() == "game_win":
             state = "game_win"
+=======
+            continue
+        if game_play.update() == "game_win":
+            state = "game_win"
+            continue
+>>>>>>> saad
         game_play.draw()
 
     elif state == "pause":
