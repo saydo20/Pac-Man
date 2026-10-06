@@ -56,10 +56,12 @@ class GameOver:
 
     def handle_events(self):
         for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                return "quit"
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_BACKSPACE and len(self.player_name) >= 0:
                     self.player_name = self.player_name[:-1]
-                elif len(self.player_name) < 9 and (event.unicode.isalpha() or event.unicode == " "):
+                elif len(self.player_name) < 10 and (event.unicode.isalpha() or event.unicode == " "):
                     self.player_name += event.unicode.lower()
                 if event.key == pygame.K_RETURN:
                     return self.player_name, self.game_data.pacman.score
@@ -122,5 +124,5 @@ class GameOver:
         self.screen.blit(self.border_yellow_y, (720, 950))
         self.screen.blit(self.border_yellow_x, (720, 1090))
 
-        self.draw_text(self.player_name, 780, 1000, 1500)
+        self.draw_text(self.player_name, 770, 1000, 1500)
         pygame.display.flip()
