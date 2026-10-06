@@ -61,11 +61,7 @@ class GameOver:
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_BACKSPACE and len(self.player_name) >= 0:
                     self.player_name = self.player_name[:-1]
-<<<<<<< HEAD
                 elif len(self.player_name) < 9 and (event.unicode.isalpha() or event.unicode == " "):
-=======
-                elif len(self.player_name) < 10 and (event.unicode.isalpha() or event.unicode == " "):
->>>>>>> saad
                     self.player_name += event.unicode.lower()
                 if event.key == pygame.K_RETURN:
                     return self.player_name, self.game_data.pacman.score
