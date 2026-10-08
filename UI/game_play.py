@@ -364,7 +364,7 @@ class GamePlay:
 
         if all(value == 0 for row in self.pacgums.pacgums_grid
                for value in row):
-            if self.game_data.nb_level == 10:
+            if self.pacman.mode == Mode.WIN:
                 return "game_win"
             else:
                 self.game_data.generate_next_level()
