@@ -1,5 +1,5 @@
 import json
-from typing import Dict
+from typing import Dict, Any
 
 
 class Config:
@@ -16,7 +16,7 @@ class Config:
             valid_config += ln
         config: Dict = json.loads(valid_config)
 
-        defaul_config = {}
+        defaul_config: Dict[str, Any] = {}
         defaul_config['highscore_filename'] = "scores.json"
         defaul_config['lives'] = 3
         defaul_config['points_per_pacgum'] = 10

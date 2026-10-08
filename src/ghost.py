@@ -9,7 +9,7 @@ class Ghost:
         self.current_position: Tuple = (0, 0)
         self.previous_position = self.current_position
         self.color = color
-        self.grid = []
+        self.grid: list = []
         self.size_maze: Tuple = (0, 0)
         self.mode = Mode.ATTACK
 

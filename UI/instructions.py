@@ -33,13 +33,14 @@ class Instructions:
         self.rules = pygame.image.load("UI/images/rules.png")
         self.controls = pygame.image.load("UI/images/controls.png")
 
-    def handle_events(self):
+    def handle_events(self) -> str | None:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 return "quit"
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     return "menu"
+        return None
 
     def update(self) -> None:
         now = time.monotonic()
@@ -76,3 +77,4 @@ class Instructions:
         self.screen.blit(self.rules, (1000, 600))
 
         pygame.display.flip()
+        return None

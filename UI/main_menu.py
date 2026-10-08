@@ -3,7 +3,7 @@ import time
 
 
 class MainMenu:
-    def __init__(self, screen):
+    def __init__(self, screen: pygame.Surface) -> None:
         self.screen = screen
         self.border_x = pygame.Surface((1900, 10))
         self.border_y = pygame.Surface((10, 1730))
@@ -52,7 +52,7 @@ class MainMenu:
         self.current_title = self.title
         self.show_coin = True
 
-    def handle_events(self):
+    def handle_events(self) -> str | None:
         for event in pygame.event.get():
             if event.type == pygame.K_ESCAPE:
                 return "quit"
@@ -74,7 +74,7 @@ class MainMenu:
                         return "quit"
         return None
 
-    def update(self):
+    def update(self) -> None:
         now = time.monotonic()
         if now - self.last_switch >= 0.5:
             self.current_title = self.title_dark if (
@@ -85,7 +85,7 @@ class MainMenu:
             self.show_coin = not self.show_coin
             self.last_switch_coin = now
 
-    def draw(self):
+    def draw(self) -> None:
         self.screen.fill((0, 0, 0))
 
         self.screen.blit(self.border_x, (0, 0))
@@ -131,3 +131,4 @@ class MainMenu:
             self.screen.blit(self.coin, (800, 1600))
 
         pygame.display.flip()
+        return None

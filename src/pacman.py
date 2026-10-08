@@ -8,7 +8,7 @@ class Pacman:
         self.current_position: Tuple
         self.lives = lives
         self.score: int = 0
-        self.grid = []
+        self.grid: list = []
         self.size_maze: Tuple = (0, 0)
         self.mode = Mode.FLEE
 

@@ -48,7 +48,7 @@ while running:
             game_play = GamePlay(screen, game_data)
             new_game = False
 
-        action = menu.handle_events()
+        action: tuple[str, int] | str | None = menu.handle_events()
 
         if action == "quit":
             running = False
@@ -101,7 +101,7 @@ while running:
         if action == "quit":
             running = False
         else:
-            if action is not None:
+            if action is not None and isinstance(action, tuple):
                 name, player_score = action
                 score.save_score(name, player_score)
                 new_game = True
@@ -115,7 +115,7 @@ while running:
         if action == "quit":
             running = False
         else:
-            if action is not None:
+            if action is not None and isinstance(action, tuple):
                 name, player_score = action
                 score.save_score(name, player_score)
                 new_game = True
@@ -132,7 +132,7 @@ while running:
         elif action == "menu":
             state = "menu"
 
-        highscores.update(score.get_scores)
+        highscores.update(score)
         highscores.draw()
 
     elif state == "instructions":

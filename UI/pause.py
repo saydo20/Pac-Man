@@ -50,7 +50,7 @@ class Pause:
         self.title_dark = pygame.image.load("UI/images/title_dark.png")
         self.pac_man_title = pygame.image.load("UI/images/pacman.png")
 
-    def handle_events(self):
+    def handle_events(self) -> str | None:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 return "quit"
@@ -66,17 +66,18 @@ class Pause:
                         return "gameplay"
                     else:
                         return "menu"
+        return None
 
-    def update(self):
+    def update(self) -> None:
         now = time.monotonic()
         if now - self.last_switch >= 1:
-            self.current_title = self.title_dark if self.current_title == self.title else self.title
+            self.current_title = self.title_dark if self.current_title == self.title else self.title  # noqa: E501
             self.last_switch = now
         if now - self.last_switch_pasue >= 0.3:
             self.paused_show = not self.paused_show
             self.last_switch_pasue = now
 
-    def draw(self):
+    def draw(self) -> None:
         self.screen.fill((0, 0, 0))
         self.screen.blit(self.border_x, (0, 0))
         self.screen.blit(self.border_y, (1890, 0))
@@ -110,9 +111,10 @@ class Pause:
         self.screen.blit(self.border_red_y, ((1330, 690)))
         if self.paused_show:
             self.screen.blit(self.paused_section, ((800, 750)))
-        self.current_resume = self.resume_hover if self.selected == 1 else self.resume_normal
-        self.current_return = self.return_hover if self.selected == 0 else self.return_normal
+        self.current_resume = self.resume_hover if self.selected == 1 else self.resume_normal  # noqa: E501
+        self.current_return = self.return_hover if self.selected == 0 else self.return_normal  # noqa: E501
         self.screen.blit(self.current_resume, ((660, 830)))
         self.screen.blit(self.current_return, ((660, 930)))
 
         pygame.display.flip()
+        return None

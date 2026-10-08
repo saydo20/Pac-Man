@@ -90,7 +90,7 @@ class MoveGhost:
                             target_position: Tuple) -> Tuple:
         queue = deque([start_position])
         visited = set()
-        parents = {}
+        parents: dict = {}
         path = []
         visited.add(start_position)
 

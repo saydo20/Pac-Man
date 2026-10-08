@@ -15,7 +15,7 @@ class Highscores:
         self.border_inside_y2 = pygame.Surface((10, 1300))
         self.border_inside_x3 = pygame.Surface((1760, 10))
         self.border_inside_y3 = pygame.Surface((10, 1260))
-        self.scores = []
+        self.scores: list = []
 
         self.line = pygame.Surface((1660, 5))
         self.last_switch = time.monotonic()
@@ -48,7 +48,7 @@ class Highscores:
         self.images["."] = pygame.image.load("UI/images/dot.png")
         self.images[":"] = pygame.image.load("UI/images/:.png")
 
-    def draw_text(self, text: str, x, y, max_size):
+    def draw_text(self, text: str, x: int, y: int, max_size: int) -> None:
         for char in text:
             if char == " ":
                 x += 10
@@ -62,23 +62,24 @@ class Highscores:
             self.screen.blit(image, (x, y))
             x += 32
 
-    def handle_events(self):
+    def handle_events(self) -> str | None:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 return "quit"
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     return "menu"
+        return None
 
-    def update(self, score: Score):
+    def update(self, score: Score) -> None:
         now = time.monotonic()
         if now - self.last_switch >= 1:
             self.current_title = self.title_dark if (
                 self.current_title == self.title) else self.title
             self.last_switch = now
-        self.scores = score
+        self.scores = score.get_scores
 
-    def draw(self):
+    def draw(self) -> None:
         self.screen.fill((0, 0, 0))
         self.screen.blit(self.border_x, (0, 0))
         self.screen.blit(self.border_y, (1890, 0))
@@ -118,3 +119,4 @@ class Highscores:
             y += 80
 
         pygame.display.flip()
+        return None

@@ -4,7 +4,7 @@ from typing import List
 
 
 class Score:
-    def __init__(self):
+    def __init__(self) -> None:
         self.__scores_file = Path("Database/scores.json")
         self.__scores_file.parent.mkdir(exist_ok=True)
 
@@ -41,4 +41,5 @@ class Score:
 
     @property
     def get_scores(self) -> List:
+        return list(self.__scores)
         return self.__scores

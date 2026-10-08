@@ -8,8 +8,8 @@ debug:
 	@python3 -m pdb pac-man.py $(ARG)
 
 lint:
-	@flake8 .
-	@mypy . --warn-return-any --warn-unused-ignores --ignore-missing-imports --disallow-untyped-defs --check-untyped-defs
+	@flake8 pac-man.py src UI
+	@mypy pac-man.py src UI --warn-return-any --warn-unused-ignores --ignore-missing-imports --disallow-untyped-defs --check-untyped-defs
 
 clean:
 	@find . -type d \( -name "__pycache__" -o -name ".mypy_cache" \) -exec rm -rf {} +

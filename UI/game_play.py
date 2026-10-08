@@ -41,7 +41,7 @@ class Player:
         self.mouth_closed = False
         self.infinite_lives = False
 
-    def move_player(self, last_move_time):
+    def move_player(self, last_move_time: float) -> None:
         now = time.monotonic()
         t = min((now - last_move_time) / 0.2, 1.0)
 
@@ -58,7 +58,7 @@ class Player:
 
         self.pexel_posstion = (pixel_x, pixel_y)
 
-    def reset_to_spawn(self):
+    def reset_to_spawn(self) -> None:
         self.pacman.start_position()
         self.current_position = self.pacman.current_position
         self.pacman_prev_position = self.current_position
@@ -78,22 +78,22 @@ class Ghost_G:
         self.is_dead = False
         self.freeze = False
 
-    def die(self, now: float):
+    def die(self, now: float) -> None:
         self.is_dead = True
         self.time_of_death = now
         self.reset_to_spawn()
 
-    def update_death_state(self, now: float):
+    def update_death_state(self, now: float) -> None:
         if self.is_dead and (now - self.time_of_death >= 2):
             self.is_dead = False
 
-    def step_ghost(self, pacman_position: tuple):
+    def step_ghost(self, pacman_position: tuple) -> None:
         self.prev_position = self.current_position
         self.ghost.move_ghost(pacman_position)
         self.current_position = self.ghost.current_position
         self.last_step_time = time.monotonic()
 
-    def update_pixel_position(self):
+    def update_pixel_position(self) -> None:
         now = time.monotonic()
         t = min((now - self.last_step_time) / 0.5, 1.0)
 
@@ -110,7 +110,7 @@ class Ghost_G:
 
         self.pexel_posstion = (pixel_x, pixel_y)
 
-    def reset_to_spawn(self):
+    def reset_to_spawn(self) -> None:
         self.ghost.set_start_position()
         self.current_position = self.ghost.current_position
         self.prev_position = self.current_position
@@ -186,7 +186,7 @@ class GamePlay:
         self.images["."] = pygame.image.load("UI/images/dot.png")
         self.images[":"] = pygame.image.load("UI/images/:.png")
 
-    def handle_events(self):
+    def handle_events(self) -> str | None:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 return "quit"
@@ -197,22 +197,22 @@ class GamePlay:
                     return "menu"
                 if event.key == pygame.K_c:
                     self.cheat_mode = not self.cheat_mode
-                    print("cheat mode activated" if self.cheat_mode else "deactivate cheat mode")
-                if self.cheat_mode:
+                    print("cheat mode activated" if self.cheat_mode else "deactivate cheat mode")  # noqa: E501
+                if self.cheat_mode:  # noqa: E501
                     if event.key == pygame.K_n:
                         self.game_data.generate_next_level()
-                        self.pacman.current_position = self.pacman.pacman.current_position
-                        self.pacman.requested_direction = Direction.RIGHT
+                        self.pacman.current_position = self.pacman.pacman.current_position  # noqa: E501
+                        self.pacman.requested_direction = Direction.RIGHT  # noqa: E501
                     if event.key == pygame.K_g:
                         for ghost in self.ghosts:
                             ghost.freeze = not ghost.freeze
-                        print("ghost freezed" if self.ghost_blue.freeze else "ghost move")
+                        print("ghost freezed" if self.ghost_blue.freeze else "ghost move")  # noqa: E501
                     if event.key == pygame.K_l:
-                        self.pacman.infinite_lives = not self.pacman.infinite_lives
-                        print("inifinte lives" if self.pacman.infinite_lives else "normal lives")
-                if not self.player_death:
+                        self.pacman.infinite_lives = not self.pacman.infinite_lives  # noqa: E501
+                        print("inifinte lives" if self.pacman.infinite_lives else "normal lives")  # noqa: E501
+                if not self.player_death:  # noqa: E501
                     if event.key == pygame.K_DOWN:
-                        self.pacman.requested_direction = Direction.DOWN
+                        self.pacman.requested_direction = Direction.DOWN  # noqa: E501
                         self.pacman.pacman_direction = "_down"
                     if event.key == pygame.K_UP:
                         self.pacman.requested_direction = Direction.UP
@@ -228,14 +228,14 @@ class GamePlay:
         self.score = self.pacman.score
         return None
 
-    def update(self):
+    def update(self) -> str | None:
         self.pacman.score = self.pacman.pacman.score
         now = time.monotonic()
         for ghost in self.ghosts:
             ghost.update_death_state(now)
         if self.player_death:
             if now - self.time_of_death < 2.0:
-                return
+                return None
             else:
                 self.player_death = False
                 self.last_move_time = now
@@ -278,10 +278,10 @@ class GamePlay:
         for ghost in self.ghosts:
             x_ghost, y_ghost = ghost.pexel_posstion
             if (x_ghost - x_player)**2 + (y_ghost - y_player)**2 <= 10**2:
-                if self.pacman.mode == Mode.FLEE and not self.pacman.infinite_lives:
+                if self.pacman.mode == Mode.FLEE and not self.pacman.infinite_lives:  # noqa: E501
                     self.time_of_death = now
                     self.player_death = True
-                    self.pacman.lives -= 1
+                    self.pacman.lives -= 1  # noqa: E501
                     self.pacman.pacman.lives -= 1
                     self.hearts = self.pacman.lives
                     self.pacman.reset_to_spawn()
@@ -300,10 +300,10 @@ class GamePlay:
                 return "game_win"
             else:
                 self.game_data.generate_next_level()
-                self.pacman.current_position = self.pacman.pacman.current_position
+                self.pacman.current_position = self.pacman.pacman.current_position  # noqa: E501
                 self.pacman.requested_direction = Direction.RIGHT
 
-        if (self.game_data.pacman.mode == Mode.ATTACK and
+        if (self.game_data.pacman.mode == Mode.ATTACK and  # noqa: E501
                 self.pacman.pacman_mode == "flee"):
             self.attack = time.monotonic()
         if now - self.attack >= 8:
@@ -312,8 +312,9 @@ class GamePlay:
         self.pacman.pacman_mode = self.game_data.pacman.mode.name.lower()
         if self.pacman.pacman.mode == Mode.WIN:
             return "game_win"
+        return None
 
-    def draw_text(self, text: str, x, y, max_size):
+    def draw_text(self, text: str, x: int, y: int, max_size: int) -> None:
         for char in text:
             if char == " ":
                 x += 10
@@ -327,7 +328,7 @@ class GamePlay:
             self.screen.blit(image, (x, y))
             x += 32
 
-    def draw(self):
+    def draw(self) -> None:
         self.screen.fill((0, 0, 0))
         self.screen.blit(self.border_x, (0, 0))
         self.screen.blit(self.border_y, (1890, 0))
@@ -427,3 +428,4 @@ class GamePlay:
         self.screen.blit(green, self.ghost_green.pexel_posstion)
 
         pygame.display.flip()
+        return None

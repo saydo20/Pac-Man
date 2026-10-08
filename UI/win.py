@@ -31,7 +31,8 @@ class GameWin:
         self.return_hover = pygame.image.load("UI/images/return_hover.png")
         self.final_score = pygame.image.load("UI/images/final_score.png")
         self.you_win_normal = pygame.image.load("UI/images/you_win_normal.png")
-        self.you_win_changed = pygame.image.load("UI/images/you_win_changed.png")
+        self.you_win_changed = pygame.image.load(
+            "UI/images/you_win_changed.png")
         self.enter_name = pygame.image.load("UI/images/enter_name.png")
         self.current_title = self.title
         self.paused_show = True
@@ -56,28 +57,30 @@ class GameWin:
         self.title_dark = pygame.image.load("UI/images/title_dark.png")
         self.pac_man_title = pygame.image.load("UI/images/pacman.png")
 
-    def handle_events(self):
+    def handle_events(self) -> tuple[str, int] | str | None:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 return "quit"
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_BACKSPACE and len(self.player_name) >= 0:
+                if event.key == pygame.K_BACKSPACE and len(
+                        self.player_name) >= 0:
                     self.player_name = self.player_name[:-1]
-                elif len(self.player_name) < 10 and (event.unicode.isalpha() or event.unicode == " "):
+                elif len(self.player_name) < 10 and (event.unicode.isalpha() or event.unicode == " "):  # noqa: E501
                     self.player_name += event.unicode.lower()
                 if event.key == pygame.K_RETURN:
                     return self.player_name, self.game_data.pacman.score
+        return None
 
-    def update(self):
+    def update(self) -> None:
         now = time.monotonic()
         if now - self.last_switch >= 1:
-            self.current_title = self.title_dark if self.current_title == self.title else self.title
+            self.current_title = self.title_dark if self.current_title == self.title else self.title  # noqa: E501
             self.last_switch = now
         if now - self.last_switch_pasue >= 0.3:
-            self.you_win = self.you_win_changed if self.you_win == self.you_win_normal else self.you_win_normal
+            self.you_win = self.you_win_changed if self.you_win == self.you_win_normal else self.you_win_normal  # noqa: E501
             self.last_switch_pasue = now
 
-    def draw_text(self, text: str, x, y, max_size):
+    def draw_text(self, text: str, x: int, y: int, max_size: int) -> None:
         for char in text:
             if char == " ":
                 x += 15
@@ -91,7 +94,7 @@ class GameWin:
             self.screen.blit(image, (x, y))
             x += 32
 
-    def draw(self):
+    def draw(self) -> None:
         self.screen.fill((0, 0, 0))
         self.screen.blit(self.border_x, (0, 0))
         self.screen.blit(self.border_y, (1890, 0))
@@ -128,3 +131,4 @@ class GameWin:
 
         self.draw_text(self.player_name, 770, 1000, 1500)
         pygame.display.flip()
+        return None
