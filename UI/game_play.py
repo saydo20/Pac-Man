@@ -190,8 +190,8 @@ class GamePlay:
         self.border_inside_x3 = pygame.Surface((1760, 10))
         self.border_inside_y3 = pygame.Surface((10, 1260))
         self.for_two = pygame.Surface((70, 70))
-        self.pacgum = pygame.Surface((10, 10))
-        self.super_pacgum = pygame.Surface((15, 15))
+        self.pacgum = pygame.image.load("UI/images/pacgum.png")
+        self.super_pacgum = pygame.image.load("UI/images/super_pacgum.png")
         self.cheat_mode = False
 
         self.game_data = game_data
@@ -212,9 +212,7 @@ class GamePlay:
 
         self.border_x.fill((0, 0, 128))
         self.border_y.fill((0, 0, 128))
-        self.pacgum.fill((255, 0, 255))
-        self.for_two.fill((0, 0, 255))
-        self.super_pacgum.fill((43, 243, 251))
+        self.for_two.fill((255, 255, 0))
 
         self.last_switch = time.monotonic()
         self.time_of_death = 0.0
@@ -463,8 +461,8 @@ class GamePlay:
         self.wall_y = pygame.Surface(
             (self.adapter.WALL_THICKNESS, self.adapter.CELL_SIZE))
 
-        self.wall_x.fill((255, 255, 255))
-        self.wall_y.fill((255, 255, 255))
+        self.wall_x.fill((0, 0, 255))
+        self.wall_y.fill((0, 0, 255))
 
         x = self.adapter.start_x
         y = self.adapter.start_y
