@@ -1,9 +1,18 @@
+"""Instructions screen module."""
+
 import pygame
 import time
 
 
 class Instructions:
+    """Manages and displays the instructions screen."""
+
     def __init__(self, screen: pygame.Surface) -> None:
+        """Initialize the instructions screen, borders and images.
+
+        Args:
+            screen: Pygame display surface.
+        """
         self.screen = screen
         self.border_x = pygame.Surface((1900, 10))
         self.border_y = pygame.Surface((10, 1730))
@@ -34,6 +43,11 @@ class Instructions:
         self.controls = pygame.image.load("UI/images/controls.png")
 
     def handle_events(self) -> str | None:
+        """Handle window and keyboard events on the instructions screen.
+
+        Returns:
+            'quit' on window close, 'menu' on Escape, or None.
+        """
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 return "quit"
@@ -43,6 +57,7 @@ class Instructions:
         return None
 
     def update(self) -> None:
+        """Toggle the title image once per second."""
         now = time.monotonic()
         if now - self.last_switch >= 1:
             self.current_title = self.title_dark if (
@@ -50,6 +65,8 @@ class Instructions:
             self.last_switch = now
 
     def draw(self) -> None:
+        """Draw the borders, title and instruction images,
+        then flip display."""
         self.screen.fill((0, 0, 0))
         self.screen.blit(self.border_x, (0, 0))
         self.screen.blit(self.border_y, (1890, 0))

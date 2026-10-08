@@ -1,3 +1,5 @@
+"""Gameplay screen module."""
+
 import pygame
 import time
 import string
@@ -9,7 +11,14 @@ from src.ghost import Ghost
 
 
 class Adapter():
+    """Converts maze grid coordinates to screen pixel positions."""
+
     def __init__(self, maze_width: int):
+        """Initialize the adapter and compute the maze start position.
+
+        Args:
+            maze_width: Number of cells in one maze row.
+        """
         self.CELL_SIZE = 70
         self.WALL_THICKNESS = 5
         AREA_X = 70
@@ -24,7 +33,15 @@ class Adapter():
 
 
 class Player:
+    """Wraps the Pacman model for drawing and movement."""
+
     def __init__(self, pacman: Pacman, adapter: Adapter):
+        """Initialize the player wrapper.
+
+        Args:
+            pacman: Pacman model holding position, lives and score.
+            adapter: Adapter used to convert grid to pixel positions.
+        """
         self.adpater = adapter
         self.pacman = pacman
         self.current_position = pacman.current_position
@@ -42,6 +59,12 @@ class Player:
         self.infinite_lives = False
 
     def move_player(self, last_move_time: float) -> None:
+        """Interpolate the pixel position between
+        the previous and current cell.
+
+        Args:
+            last_move_time: Monotonic time of the last grid move.
+        """
         now = time.monotonic()
         t = min((now - last_move_time) / 0.2, 1.0)
 
@@ -59,6 +82,7 @@ class Player:
         self.pexel_posstion = (pixel_x, pixel_y)
 
     def reset_to_spawn(self) -> None:
+        """Move Pacman back to its spawn position."""
         self.pacman.start_position()
         self.current_position = self.pacman.current_position
         self.pacman_prev_position = self.current_position
@@ -66,7 +90,15 @@ class Player:
 
 
 class Ghost_G:
+    """Wraps a Ghost model for drawing, movement and death state."""
+
     def __init__(self, ghost: Ghost, adapter: Adapter):
+        """Initialize the ghost wrapper.
+
+        Args:
+            ghost: Ghost model holding position and mode.
+            adapter: Adapter used to convert grid to pixel positions.
+        """
         self.adapter = adapter
         self.ghost = ghost
         self.current_position = ghost.current_position
@@ -79,21 +111,38 @@ class Ghost_G:
         self.freeze = False
 
     def die(self, now: float) -> None:
+        """Mark the ghost as dead and send it back to spawn.
+
+        Args:
+            now: Monotonic time of the death.
+        """
         self.is_dead = True
         self.time_of_death = now
         self.reset_to_spawn()
 
     def update_death_state(self, now: float) -> None:
+        """Revive the ghost after two seconds of being dead.
+
+        Args:
+            now: Current monotonic time.
+        """
         if self.is_dead and (now - self.time_of_death >= 2):
             self.is_dead = False
 
     def step_ghost(self, pacman_position: tuple) -> None:
+        """Advance the ghost one cell toward or away from Pacman.
+
+        Args:
+            pacman_position: Current (x, y) grid position of Pacman.
+        """
         self.prev_position = self.current_position
         self.ghost.move_ghost(pacman_position)
         self.current_position = self.ghost.current_position
         self.last_step_time = time.monotonic()
 
     def update_pixel_position(self) -> None:
+        """Interpolate the pixel position between
+        the previous and current cell."""
         now = time.monotonic()
         t = min((now - self.last_step_time) / 0.5, 1.0)
 
@@ -111,6 +160,7 @@ class Ghost_G:
         self.pexel_posstion = (pixel_x, pixel_y)
 
     def reset_to_spawn(self) -> None:
+        """Move the ghost back to its spawn position."""
         self.ghost.set_start_position()
         self.current_position = self.ghost.current_position
         self.prev_position = self.current_position
@@ -119,7 +169,15 @@ class Ghost_G:
 
 
 class GamePlay:
+    """Manages and displays the main gameplay screen."""
+
     def __init__(self, screen: pygame.Surface, game_data: GameData):
+        """Initialize the gameplay screen, sprites and images.
+
+        Args:
+            screen: Pygame display surface.
+            game_data: Game data containing maze, pacgums, ghosts and Pacman.
+        """
         self.adapter = Adapter(len(game_data.maze.maze[0]))
         self.pacman = Player(game_data.pacman, self.adapter)
         self.screen = screen
@@ -187,6 +245,11 @@ class GamePlay:
         self.images[":"] = pygame.image.load("UI/images/:.png")
 
     def handle_events(self) -> str | None:
+        """Handle keyboard and window events during gameplay.
+
+        Returns:
+            'quit' on window close, 'pause' on P, 'menu' on Escape, or None.
+        """
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 return "quit"
@@ -229,6 +292,11 @@ class GamePlay:
         return None
 
     def update(self) -> str | None:
+        """Update movement, timers, ghosts, collisions and win or loss state.
+
+        Returns:
+            'game_over', 'game_win', or None to keep playing.
+        """
         self.pacman.score = self.pacman.pacman.score
         now = time.monotonic()
         for ghost in self.ghosts:
@@ -315,6 +383,14 @@ class GamePlay:
         return None
 
     def draw_text(self, text: str, x: int, y: int, max_size: int) -> None:
+        """Render text character by character on the screen.
+
+        Args:
+            text: Text string to render.
+            x: Starting x-coordinate.
+            y: Starting y-coordinate.
+            max_size: Maximum horizontal pixel boundary.
+        """
         for char in text:
             if char == " ":
                 x += 10
@@ -329,6 +405,8 @@ class GamePlay:
             x += 32
 
     def draw(self) -> None:
+        """Draw the maze, borders, HUD, Pacman and ghosts,
+        then update the display."""
         self.screen.fill((0, 0, 0))
         self.screen.blit(self.border_x, (0, 0))
         self.screen.blit(self.border_y, (1890, 0))
