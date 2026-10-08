@@ -58,6 +58,14 @@ class Highscores:
         self.images[":"] = pygame.image.load("UI/images/:.png")
 
     def draw_text(self, text: str, x: int, y: int, max_size: int) -> None:
+        """Render text character by character on the screen.
+
+        Args:
+            text: Text string to render.
+            x: Starting x-coordinate.
+            y: Starting y-coordinate.
+            max_size: Maximum horizontal pixel boundary.
+        """
         for char in text:
             if char == " ":
                 x += 10
@@ -72,6 +80,11 @@ class Highscores:
             x += 32
 
     def handle_events(self) -> str | None:
+        """Handle window and keyboard events on the highscores screen.
+
+        Returns:
+            'quit' on window close, 'menu' on Escape, or None.
+        """
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 return "quit"
@@ -81,6 +94,11 @@ class Highscores:
         return None
 
     def update(self, score: Score) -> None:
+        """Toggle the title image and load the latest scores.
+
+        Args:
+            score: Score object that provides the high score list.
+        """
         now = time.monotonic()
         if now - self.last_switch >= 1:
             self.current_title = self.title_dark if (
@@ -89,6 +107,7 @@ class Highscores:
         self.scores = score.get_scores
 
     def draw(self) -> None:
+        """Draw the borders, title, column headers and score rows."""
         self.screen.fill((0, 0, 0))
         self.screen.blit(self.border_x, (0, 0))
         self.screen.blit(self.border_y, (1890, 0))
