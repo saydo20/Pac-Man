@@ -1,3 +1,5 @@
+"""Highscores screen module for Pac-Man."""
+
 import pygame
 import time
 from src.score import Score
@@ -5,7 +7,14 @@ import string
 
 
 class Highscores:
+    """Manages and displays the high scores screen."""
+
     def __init__(self, screen: pygame.Surface):
+        """Initialize the highscores screen.
+
+        Args:
+            screen: Pygame display surface.
+        """
         self.screen = screen
         self.border_x = pygame.Surface((1900, 10))
         self.border_y = pygame.Surface((10, 1730))

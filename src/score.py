@@ -1,10 +1,15 @@
+"""Score management module for saving and loading player scores."""
+
 import json
 from pathlib import Path
 from typing import List
 
 
 class Score:
+    """Manages player scores with persistent JSON storage."""
+
     def __init__(self) -> None:
+        """Initialize the score manager and load existing scores."""
         self.__scores_file = Path("Database/scores.json")
         self.__scores_file.parent.mkdir(exist_ok=True)
 
@@ -15,6 +20,12 @@ class Score:
             self.__scores = []
 
     def save_score(self, player_name: str, player_score: int) -> None:
+        """Save or update a player's score and keep top 10.
+
+        Args:
+            player_name: The player's name.
+            player_score: The player's score to save.
+        """
         player_found = False
 
         for s in self.__scores:
@@ -41,5 +52,10 @@ class Score:
 
     @property
     def get_scores(self) -> List:
+        """Return the list of saved scores.
+
+        Returns:
+            List of score dictionaries.
+        """
         return list(self.__scores)
         return self.__scores

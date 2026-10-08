@@ -1,10 +1,19 @@
+"""Pacman player module."""
+
 from typing import Tuple
 
 from src.enums_helper import Mode
 
 
 class Pacman:
+    """Represents the Pac-Man player character."""
+
     def __init__(self, lives: int = 3):
+        """Initialize Pac-Man with default attributes.
+
+        Args:
+            lives: Number of lives for the player.
+        """
         self.current_position: Tuple
         self.lives = lives
         self.score: int = 0
@@ -13,6 +22,7 @@ class Pacman:
         self.mode = Mode.FLEE
 
     def start_position(self) -> None:
+        """Set Pac-Man's starting position at the center of the maze."""
         width, height = self.size_maze
         x = width // 2
         y = height // 2

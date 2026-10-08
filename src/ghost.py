@@ -1,3 +1,5 @@
+"""Ghost entity module."""
+
 from typing import Tuple
 
 from src.enums_helper import Mode, Color
@@ -5,7 +7,14 @@ from src.move_ghosts import MoveGhost
 
 
 class Ghost:
+    """Represents a ghost character in the game."""
+
     def __init__(self, color: Color):
+        """Initialize a ghost with a given color.
+
+        Args:
+            color: The ghost's color identity.
+        """
         self.current_position: Tuple = (0, 0)
         self.previous_position = self.current_position
         self.color = color
@@ -14,6 +23,15 @@ class Ghost:
         self.mode = Mode.ATTACK
 
     def __get_right_position(self, x: int, y: int) -> Tuple:
+        """Find a valid start position by moving away from walls.
+
+        Args:
+            x: Starting x coordinate.
+            y: Starting y coordinate.
+
+        Returns:
+            A valid (x, y) position tuple.
+        """
         match self.color:
             case Color.RED | Color.BLUE:
                 # Move down but stop before falling off the bottom edge
@@ -28,6 +46,8 @@ class Ghost:
                 return (x, y)
 
     def set_start_position(self) -> None:
+        """Set the ghost's start position based on
+        its color and maze corner."""
         x, y = self.size_maze
 
         match self.color:
@@ -41,6 +61,11 @@ class Ghost:
                 self.current_position = self.__get_right_position(x - 1, y - 1)
 
     def move_ghost(self, pacman_position: Tuple) -> None:
+        """Move the ghost based on its current mode.
+
+        Args:
+            pacman_position: Current (x, y) position of Pac-Man.
+        """
         # make the ghost run from pacman when they are in FLEE mode
         if self.mode == Mode.FLEE:
             next_step = MoveGhost.ghosts_run_away(

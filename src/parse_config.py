@@ -1,10 +1,22 @@
+"""Configuration parsing module for game settings."""
+
 import json
 from typing import Dict, Any
 
 
 class Config:
+    """Handles loading and validating game configuration from JSON files."""
+
     @staticmethod
     def get_configuration(file_path: str) -> Dict:
+        """Read and validate a JSON configuration file.
+
+        Args:
+            file_path: Path to the JSON configuration file.
+
+        Returns:
+            Dictionary of validated configuration values.
+        """
         with open(file_path, "r") as f:
             lines = f.readlines()
 

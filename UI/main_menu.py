@@ -1,9 +1,18 @@
+"""Main menu module for Pac-Man."""
+
 import pygame
 import time
 
 
 class MainMenu:
+    """Manages and displays the main menu screen."""
+
     def __init__(self, screen: pygame.Surface) -> None:
+        """Initialize the main menu.
+
+        Args:
+            screen: Pygame display surface.
+        """
         self.screen = screen
         self.border_x = pygame.Surface((1900, 10))
         self.border_y = pygame.Surface((10, 1730))
@@ -53,6 +62,11 @@ class MainMenu:
         self.show_coin = True
 
     def handle_events(self) -> str | None:
+        """Handle keyboard navigation and menu selection.
+
+        Returns:
+            Selected action string or None.
+        """
         for event in pygame.event.get():
             if event.type == pygame.K_ESCAPE:
                 return "quit"
@@ -75,6 +89,7 @@ class MainMenu:
         return None
 
     def update(self) -> None:
+        """Toggle title and coin animations."""
         now = time.monotonic()
         if now - self.last_switch >= 0.5:
             self.current_title = self.title_dark if (
@@ -86,6 +101,7 @@ class MainMenu:
             self.last_switch_coin = now
 
     def draw(self) -> None:
+        """Draw the main menu screen."""
         self.screen.fill((0, 0, 0))
 
         self.screen.blit(self.border_x, (0, 0))

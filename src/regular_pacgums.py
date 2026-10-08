@@ -1,14 +1,25 @@
+"""Regular pacgum placement module."""
+
 import random
 from typing import List, Dict, Tuple
 
 
 class RegularPacgum:
+    """Manages regular pacgum placement on the maze grid."""
 
     def __init__(self, config: Dict,
                  pacman_position: Tuple,
                  super_pacgums_position: List[Tuple],
                  grid: List[List], nb_level: int) -> None:
+        """Initialize regular pacgums on the maze grid.
 
+        Args:
+            config: Game configuration dictionary.
+            pacman_position: Pac-Man's starting position.
+            super_pacgums_position: Positions of super pacgums to exclude.
+            grid: The maze grid.
+            nb_level: Current level number.
+        """
         self.__pacman_position = pacman_position
         self.__super_pacgums_position = super_pacgums_position
         self.__grid = grid
@@ -31,12 +42,29 @@ class RegularPacgum:
             self.pacgums_grid[y][x] = 1
 
     def __is_position_has_superpacgums(self, y: int, x: int) -> bool:
+        """Check if a position already contains a super pacgum.
+
+        Args:
+            y: Row index.
+            x: Column index.
+
+        Returns:
+            True if the position has a super pacgum.
+        """
         for ps in self.__super_pacgums_position:
             if (x, y) == ps:
                 return True
         return False
 
     def __get_available_coords(self, grid: List[List]) -> List[Tuple]:
+        """Get available cell coordinates for placing pacgums.
+
+        Args:
+            grid: The maze grid.
+
+        Returns:
+            List of (y, x) tuples of valid pacgum positions.
+        """
         available_cells = []
 
         for y in range(len(grid)):

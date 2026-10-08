@@ -1,9 +1,18 @@
+"""Pause screen module for Pac-Man."""
+
 import pygame
 import time
 
 
 class Pause:
+    """Manages and displays the pause screen."""
+
     def __init__(self, screen: pygame.Surface):
+        """Initialize the pause screen.
+
+        Args:
+            screen: Pygame display surface.
+        """
         self.screen = screen
         self.border_x = pygame.Surface((1900, 10))
         self.border_y = pygame.Surface((10, 1730))
@@ -51,6 +60,11 @@ class Pause:
         self.pac_man_title = pygame.image.load("UI/images/pacman.png")
 
     def handle_events(self) -> str | None:
+        """Handle keyboard input for resume and return selection.
+
+        Returns:
+            Selected action string or None.
+        """
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 return "quit"
@@ -69,6 +83,7 @@ class Pause:
         return None
 
     def update(self) -> None:
+        """Toggle title and paused text animations."""
         now = time.monotonic()
         if now - self.last_switch >= 1:
             self.current_title = self.title_dark if self.current_title == self.title else self.title  # noqa: E501
@@ -78,6 +93,7 @@ class Pause:
             self.last_switch_pasue = now
 
     def draw(self) -> None:
+        """Draw the pause screen."""
         self.screen.fill((0, 0, 0))
         self.screen.blit(self.border_x, (0, 0))
         self.screen.blit(self.border_y, (1890, 0))

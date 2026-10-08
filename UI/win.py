@@ -1,3 +1,5 @@
+"""Victory screen module for Pac-Man."""
+
 import pygame
 import time
 import string
@@ -5,7 +7,15 @@ from src.gamedata import GameData
 
 
 class GameWin:
+    """Manages and displays the victory screen."""
+
     def __init__(self, screen: pygame.Surface, game_data: GameData):
+        """Initialize the win screen.
+
+        Args:
+            screen: Pygame display surface.
+            game_data: Game data containing player score.
+        """
         self.screen = screen
         self.game_data = game_data
         self.border_x = pygame.Surface((1900, 10))
@@ -58,6 +68,11 @@ class GameWin:
         self.pac_man_title = pygame.image.load("UI/images/pacman.png")
 
     def handle_events(self) -> tuple[str, int] | str | None:
+        """Handle keyboard input for player name entry.
+
+        Returns:
+            Tuple of (name, score) on Enter, 'quit' on close, or None.
+        """
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 return "quit"
@@ -72,6 +87,7 @@ class GameWin:
         return None
 
     def update(self) -> None:
+        """Toggle title and win text animations."""
         now = time.monotonic()
         if now - self.last_switch >= 1:
             self.current_title = self.title_dark if self.current_title == self.title else self.title  # noqa: E501
@@ -81,6 +97,14 @@ class GameWin:
             self.last_switch_pasue = now
 
     def draw_text(self, text: str, x: int, y: int, max_size: int) -> None:
+        """Render text character by character on the screen.
+
+        Args:
+            text: Text string to render.
+            x: Starting x-coordinate.
+            y: Starting y-coordinate.
+            max_size: Maximum horizontal pixel boundary.
+        """
         for char in text:
             if char == " ":
                 x += 15
@@ -95,6 +119,7 @@ class GameWin:
             x += 32
 
     def draw(self) -> None:
+        """Draw the win screen."""
         self.screen.fill((0, 0, 0))
         self.screen.blit(self.border_x, (0, 0))
         self.screen.blit(self.border_y, (1890, 0))

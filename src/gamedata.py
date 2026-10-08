@@ -1,3 +1,5 @@
+"""Game data management module for maze, entities, and game state."""
+
 from src.ghost import Ghost
 from src.pacman import Pacman
 from src.super_pacgums import SuperPacgum
@@ -9,8 +11,14 @@ from typing import Dict, Tuple, List
 
 
 class GameData:
+    """Manages all game state including maze, ghosts, pacman, and pacgums."""
 
     def __init__(self, config: Dict) -> None:
+        """Initialize the game with maze, entities, and scoring from config.
+
+        Args:
+            config: Dictionary of game configuration values.
+        """
         self.config = config
 
         # set the maze
@@ -45,33 +53,41 @@ class GameData:
 
     @property
     def ghost_red(self) -> Ghost:
+        """Return the red ghost instance."""
         return self.__ghost_red
 
     @property
     def ghost_blue(self) -> Ghost:
+        """Return the blue ghost instance."""
         return self.__ghost_blue
 
     @property
     def ghost_green(self) -> Ghost:
+        """Return the green ghost instance."""
         return self.__ghost_green
 
     @property
     def ghost_yellow(self) -> Ghost:
+        """Return the yellow ghost instance."""
         return self.__ghost_yellow
 
     @property
     def pacman(self) -> Pacman:
+        """Return the Pac-Man instance."""
         return self.__pacman
 
     @property
     def regular_pacgums(self) -> RegularPacgum:
+        """Return the regular pacgums instance."""
         return self.__regular_pacgums
 
     @property
     def super_pacgums(self) -> SuperPacgum:
+        """Return the super pacgums instance."""
         return self.__super_pacgums
 
     def __set_the_ghosts(self) -> None:
+        """Create and position all four ghosts on the maze."""
         # initialize red ghost and his start location
         self.__ghost_red = Ghost(Color.RED)
         self.__ghost_red.grid = self.grid
@@ -97,6 +113,11 @@ class GameData:
         self.__ghost_yellow.set_start_position()
 
     def __set_pacman(self, lives: int) -> None:
+        """Create and position Pac-Man on the maze.
+
+        Args:
+            lives: Number of lives for Pac-Man.
+        """
         self.__pacman = Pacman(lives)
         self.__pacman.grid = self.grid
         self.__pacman.size_maze = self.size_maze
@@ -104,6 +125,16 @@ class GameData:
 
     def __can_move(self, current_position: Tuple, direction: Direction,
                    grid: List[List]) -> bool:
+        """Check if movement in the given direction is valid.
+
+        Args:
+            current_position: Current (x, y) position.
+            direction: Direction to move.
+            grid: The maze grid.
+
+        Returns:
+            True if no wall blocks the movement.
+        """
         x, y = current_position
 
         if direction.value & grid[y][x] > 0:
@@ -113,6 +144,12 @@ class GameData:
 
     def __add_score_to_pacman(self, current_position: Tuple,
                               grid_pacgums: List[List]) -> None:
+        """Add score to Pac-Man when eating pacgums or super pacgums.
+
+        Args:
+            current_position: Pac-Man's current (x, y) position.
+            grid_pacgums: The pacgum grid to check and update.
+        """
         x, y = current_position
 
         # check if the pacman eat super_pacgum
@@ -127,6 +164,7 @@ class GameData:
             self.pacman.score += self.score_per_pacgum
 
     def generate_next_level(self) -> None:
+        """Generate the next maze level and reset all entities."""
 
         self.nb_level += 1
         if self.nb_level > 10:
@@ -181,6 +219,12 @@ class GameData:
 
     def change_mode_player_ghosts(self, pacman_mode: Mode,
                                   ghost_mode: Mode) -> None:
+        """Change the mode of Pac-Man and all ghosts.
+
+        Args:
+            pacman_mode: New mode for Pac-Man.
+            ghost_mode: New mode for all ghosts.
+        """
         # change the mode of the player
         self.pacman.mode = pacman_mode
 
@@ -192,6 +236,15 @@ class GameData:
 
     def update_pos_by_dirc(self, current_position: Tuple,
                            direction: Direction) -> Tuple:
+        """Move Pac-Man in the given direction if valid.
+
+        Args:
+            current_position: Current (x, y) position.
+            direction: Direction to move.
+
+        Returns:
+            Updated (x, y) position, or original if blocked.
+        """
         x, y = current_position
         grid_maze = self.grid
         grid_pacgums = self.regular_pacgums.pacgums_grid

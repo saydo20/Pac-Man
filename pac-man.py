@@ -1,3 +1,9 @@
+"""Main entry point for the Pac-Man game.
+
+Initializes pygame, loads configuration, and runs the main game loop
+managing state transitions between menu, gameplay, pause, and end screens.
+"""
+
 import pygame
 from sys import argv
 
